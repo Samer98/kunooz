@@ -15,7 +15,7 @@ import sys
 import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _ # Here
 #
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -208,13 +209,14 @@ USE_I18N = True
 USE_TZ = True
 
 # Available Languages
-# LANGUAGES = [
-#     ('ar', _('Arabic')),
-#     ('en', _('English')),
-# ]# Locales available path
-# LOCALE_PATHS = [
-#     os.path.join(BASE_DIR, 'locale/')
-# ]
+LANGUAGES = [
+    ('ar', _('Arabic')),
+    ('en', _('English')),
+]# Locales available path
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale/')
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
