@@ -5,8 +5,26 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from phonenumber_field.modelfields import PhoneNumberField
-
+from django.core.exceptions import ValidationError
+from multiselectfield import MultiSelectField
 # Create your models here.
+
+def validate_file_size(value):
+    # Limit the file size to 100MB (100 * 1024 * 1024 bytes)
+    max_size = 10 * 1024 * 1024
+    if value.size > max_size:
+        raise ValidationError('File size cannot exceed 10MB.')
+
+class Role(models.Model):
+    ROLE_CHOICES= [
+        ('Consultant', "Consultant"),
+        ("User", "User"),
+        ("Worker", "Worker"),
+    ]
+    role = models.CharField(choices=ROLE_CHOICES,max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.role
 class CustomUserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
 
@@ -38,6 +56,13 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    MY_SERVICES_CHOICES = (
+                  ('1', '1'),
+                  ('item_key2', 'Item title 1.2'),
+                  ('item_key3', 'Item title 1.3'),
+                  ('item_key4', 'Item title 1.4'),
+                  ('item_key5', 'Item title 1.5')
+    )
     username = None
     username_validator = None
     # is_verified field
@@ -49,23 +74,15 @@ class User(AbstractUser):
         blank=True,  # You can set this to True if the field can be left empty
         help_text="User's personal date"
     )
-
     company_name = models.CharField(max_length=255, null=True, blank=True)
+
+    profile_picture = models.ImageField(upload_to ='profile_picture',null=True, blank=True,validators=[validate_file_size])
     introduction = models.TextField(null=True, blank=True)
-    # video = models.FileField(upload_to='consultant_videos_uploaded', null=True, blank=True,
-    #                          validators=[
-    #                              FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm', 'mkv'])])
-    # qualifications = models.TextField(null=True, blank=True)
-    # qualifications_img = models.ImageField(upload_to='qualifications_images_uploaded', null=True, blank=True)
-    # specializations = models.TextField(null=True, blank=True)
-    # specializations_img = models.ImageField(upload_to='specializations_images_uploaded', null=True, blank=True)
-    # services = models.TextField(null=True, blank=True)
-    # services_img = models.ImageField(upload_to='services_images_uploaded', null=True, blank=True)
+    cv = models.FileField(validators=[validate_file_size],null=True,blank=True)
+    role = models.ForeignKey(Role,on_delete=models.PROTECT,default=1)
+    services = MultiSelectField(choices=MY_SERVICES_CHOICES,max_length=20,default="None")
 
-    # is_consultant = models.BooleanField(default=False)
-    # is_asker_view = models.BooleanField(default=True)
-
-
+    # services = MultiSelectField(choices=[('1',2)])
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 
@@ -74,13 +91,6 @@ class User(AbstractUser):
     def __str__(self):
         return str(self.phone_number)
 
-class Role(models.Model):
-    ROLE_CHOICES= [
-        ('Consultant', "Consultant"),
-        ("User", "User"),
-        ("Worker", "Worker"),
-    ]
-    role = models.CharField(choices=ROLE_CHOICES,max_length=255, null=True, blank=True)
 
 
 class VerifiedPhone(models.Model):

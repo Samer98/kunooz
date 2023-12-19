@@ -15,6 +15,7 @@ import sys
 import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
+from django.utils.translation import gettext as _
 #
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -52,7 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
-    'members'
+    'members',
+    'multiselectfield'
 ]
 
 
@@ -204,6 +206,15 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+# Available Languages
+# LANGUAGES = [
+#     ('ar', _('Arabic')),
+#     ('en', _('English')),
+# ]# Locales available path
+# LOCALE_PATHS = [
+#     os.path.join(BASE_DIR, 'locale/')
+# ]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
