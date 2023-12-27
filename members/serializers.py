@@ -27,33 +27,22 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         fields = ['id','phone_number','password']
 
 class ProfileSerializer(serializers.ModelSerializer):
-    is_consultant = serializers.CharField(max_length=255,read_only=True)
-
     class Meta:
         model = User
-        fields = ['id','full_name','personal_date','job_name','introduction',"video",'qualifications','qualifications_img','specializations','specializations_img','services','services_img','is_consultant']
+        fields = ['id','first_name','second_name','phone_number','personal_date','job_name','introduction',"profile_picture",'cv','role','services','Commercial_license']
 
 class MyProfileSerializer(serializers.ModelSerializer):
-    is_consultant = serializers.CharField(max_length=255,read_only=True)
-
     class Meta:
         model = User
-        fields = ['id','full_name','personal_date','wallet','job_name','introduction',"video",'qualifications','qualifications_img','specializations','specializations_img','services','services_img','is_consultant']
+        fields = ['id','first_name','second_name','phone_number','personal_date','job_name','job_name','introduction',"profile_picture",'cv','role','services','Commercial_license','services']
 
 class EditProfileSerializer(serializers.ModelSerializer):
     # is_consultant = serializers.CharField(max_length=255,read_only=True)
 
     class Meta:
         model = User
-        fields = ['id','full_name','personal_date','job_name','introduction',"video",'qualifications','qualifications_img','specializations','specializations_img','services','services_img','is_consultant']
+        fields = ['id','first_name','second_name','personal_date','job_name','introduction',"profile_picture",'cv','services','Commercial_license','specializations_img','services']
 
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
         fields = ['id','phone_number']
-
-
-class UserToAdminSerializer(BaseUserSerializer):
-    # full_name = serializers.CharField(max_length=255,read_only=True)
-
-    class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'full_name', 'email', 'is_superuser','is_staff']

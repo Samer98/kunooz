@@ -75,21 +75,22 @@ class User(AbstractUser):
         help_text="User's personal date"
     )
     company_name = models.CharField(max_length=255, null=True, blank=True)
-
+    job_name = models.CharField(max_length=255, null=True, blank=True)
     profile_picture = models.ImageField(upload_to ='profile_picture',null=True, blank=True,validators=[validate_file_size])
     introduction = models.TextField(null=True, blank=True)
     cv = models.FileField(validators=[validate_file_size],null=True,blank=True)
     role = models.ForeignKey(Role,on_delete=models.PROTECT,default=1)
     services = MultiSelectField(choices=MY_SERVICES_CHOICES,max_length=20,default="None")
+    Commercial_license = models.FileField(validators=[validate_file_size],null=True,blank=True)
 
-    # services = MultiSelectField(choices=[('1',2)])
+    projects_limits = models.IntegerField(default=0)
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
     def __str__(self):
-        return str(self.phone_number)
+        return str(self.first_name) + str(self.phone_number)
 
 
 

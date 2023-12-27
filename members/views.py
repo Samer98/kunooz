@@ -11,7 +11,7 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import User, VerifiedPhone
-from .serializers import ProfileSerializer, UserToAdminSerializer, MyProfileSerializer, \
+from .serializers import ProfileSerializer, MyProfileSerializer, \
     CustomTokenObtainPairSerializer
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser

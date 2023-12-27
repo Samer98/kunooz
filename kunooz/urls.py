@@ -23,5 +23,6 @@ urlpatterns = [
     path("auth/", include("djoser.social.urls")),
     path('auth/', include('djoser.urls.jwt')),
     path('members/', include('members.urls')),
+    path('constructions/', include('constructions.urls')),
 
 ]
