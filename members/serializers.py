@@ -24,7 +24,8 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         else:
             raise PermissionDenied("The phone number not verified")
     class Meta(BaseUserCreateSerializer.Meta):
-        fields = ['id','phone_number','password']
+        fields = ['id','phone_number','password','first_name','second_name',
+                  'role','company_name','services','Commercial_license']
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:

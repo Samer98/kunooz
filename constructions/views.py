@@ -5,9 +5,9 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import SearchFilter
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from .models import Project, ProjectMembers
+from .models import Project, ProjectMember
 from members.models import User
 from .serializers import ProjectSerializers, ProjectMembersSerializers
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
@@ -19,7 +19,7 @@ from kunooz.permissions import IsConsultant
 # Create your views here.
 
 
-class ProjectViewSet(ModelViewSet):
+class ProjectViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin,ListModelMixin, GenericViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializers
     permission_classes = [IsConsultant]
@@ -60,19 +60,20 @@ class ProjectViewSet(ModelViewSet):
 
         return Response(serializer.data)
 
-    def destroy(self, request, *args, **kwargs):
-        project = self.get_object()
+    def delete(self, request):
+        project_id = self.request.data.get('project_id')
+        project = get_object_or_404(Project, id=project_id)
         user = request.user
 
         if project.project_owner != user:
             return Response(_("You are not the owner of this project"), status=status.HTTP_403_FORBIDDEN)
 
         project.delete()
-        return Response(_("Project deleted successfully"), status=status.HTTP_204_NO_CONTENT)
+        return Response(_(f"Project {project.title} deleted successfully"), status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin, GenericViewSet):
-    queryset = ProjectMembers.objects.all()
+    queryset = ProjectMember.objects.all()
     serializer_class = ProjectMembersSerializers
     permission_classes = [IsConsultant]
 
@@ -87,7 +88,7 @@ class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMix
             return Response(_("You are not the owner of this project"), status=status.HTTP_403_FORBIDDEN)
 
         # Filtering ProjectMembers by the Project's ID
-        project_members = ProjectMembers.objects.filter(project_id=project_id)
+        project_members = ProjectMember.objects.filter(project_id=project_id)
         users = []
         for member in project_members:
             user_data = {
@@ -117,7 +118,7 @@ class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMix
         if not user:
             return Response("User does not exist in the system", status=status.HTTP_400_BAD_REQUEST)
 
-        if ProjectMembers.objects.filter(project=project, member=user).exists():
+        if ProjectMember.objects.filter(project=project, member=user).exists():
             return Response("the user already exist", status=status.HTTP_400_BAD_REQUEST)
 
         # Check if the user has the 'Consultant' role
@@ -126,7 +127,7 @@ class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMix
             return Response("Can't add a consultant to your project", status=status.HTTP_400_BAD_REQUEST)
 
         # Create a new ProjectMembers entry
-        project_member = ProjectMembers.objects.create(project=project, member=user,phone_number=phone_number)
+        project_member = ProjectMember.objects.create(project=project, member=user, phone_number=phone_number)
         serializer = ProjectMembersSerializers(project_member)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -150,8 +151,8 @@ class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMix
 
         # Check if the user is a member of the project
         try:
-            project_member = ProjectMembers.objects.get(project=project, member=user)
-        except ProjectMembers.DoesNotExist:
+            project_member = ProjectMember.objects.get(project=project, member=user)
+        except ProjectMember.DoesNotExist:
             return Response("User is not a member of this project", status=status.HTTP_400_BAD_REQUEST)
 
         # Delete the project member association

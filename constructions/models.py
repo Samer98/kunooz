@@ -35,7 +35,7 @@ class Project(models.Model):
         return str(self.title) + " | " + str(self.project_owner.first_name)
 
 
-class ProjectMembers(models.Model):
+class ProjectMember(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     member = models.ForeignKey(User, on_delete=models.CASCADE)
 

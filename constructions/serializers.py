@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Project,ProjectMembers
+from .models import Project,ProjectMember
 class ProjectSerializers(serializers.ModelSerializer):
     project_owner = serializers.CharField(max_length=255,read_only=True)
     class Meta:
@@ -11,5 +11,5 @@ class ProjectMembersSerializers(serializers.ModelSerializer):
     phone_number = serializers.CharField(max_length=255,read_only=True)
 
     class Meta:
-        model = ProjectMembers
+        model = ProjectMember
         fields = ['id','project','member',"phone_number"]
