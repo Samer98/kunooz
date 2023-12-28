@@ -4,12 +4,9 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register('project', views.ProjectViewSet)
+router.register('project', views.ProjectViewSet,basename="project")
+router.register('projectMembers', views.ProjectMembersViewSet,basename="projectMembers")
 
 urlpatterns = [
-                  path('auth/', include('djoser.urls')),
-                  path("auth/", include("djoser.social.urls")),
-                  path('auth/', include('djoser.urls.jwt')),
-                  path('members/', include('members.urls')),
 
               ] + router.urls

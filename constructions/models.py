@@ -28,7 +28,11 @@ class Project(models.Model):
     start_date = models.DateField(null=False, blank=False)
     end_date = models.DateField(null=False, blank=False)
     status = models.CharField(choices=STATUS_CHOICES,max_length=255,default="On Going")
-
-class Project_members(models.Model):
+    def __str__(self):
+        return str(self.title) + str(self.project_owner)
+class ProjectMembers(models.Model):
     project = models.ForeignKey(Project,on_delete=models.CASCADE)
-    member = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.project) + str(self.user)
