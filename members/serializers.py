@@ -37,7 +37,6 @@ class MyProfileSerializer(serializers.ModelSerializer):
         fields = ['id','first_name','second_name','phone_number','personal_date','job_name','job_name','introduction',"profile_picture",'cv','role','services','Commercial_license','services']
 
 class EditProfileSerializer(serializers.ModelSerializer):
-    # is_consultant = serializers.CharField(max_length=255,read_only=True)
 
     class Meta:
         model = User

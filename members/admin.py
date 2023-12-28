@@ -13,7 +13,7 @@ class CustomUserAdmin(UserAdmin):
         (None, {'fields': ('phone_number', 'password')}),
         (_('Personal info'), {'fields': ('first_name','second_name','personal_date' )}),
         (_('Employee info'), {'fields': (
-        'company_name', 'introduction','services')}),
+        'company_name', 'introduction','services','projects_limits')}),
         (_('Permissions'), {'fields': ('role','is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),

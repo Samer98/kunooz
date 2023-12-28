@@ -8,5 +8,4 @@ router.register('project', views.ProjectViewSet,basename="project")
 router.register('projectMembers', views.ProjectMembersViewSet,basename="projectMembers")
 
 urlpatterns = [
-
               ] + router.urls
