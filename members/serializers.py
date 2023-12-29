@@ -30,18 +30,21 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','first_name','second_name','phone_number','personal_date','job_name','introduction',"profile_picture",'cv','role','services','Commercial_license']
+        fields = ['id','first_name','second_name','phone_number',
+                  'job_name','introduction',"profile_picture",'cv','role','services','Commercial_license']
 
 class MyProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','first_name','second_name','phone_number','personal_date','job_name','job_name','introduction',"profile_picture",'cv','role','services','Commercial_license','services']
+        fields = ['id','first_name','second_name','phone_number',
+                  'job_name','job_name','introduction',"profile_picture",'cv','role','services','Commercial_license']
 
 class EditProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id','first_name','second_name','personal_date','job_name','introduction',"profile_picture",'cv','services','Commercial_license','specializations_img','services']
+        fields = ['id','first_name','second_name',
+                  'job_name','introduction',"profile_picture",'cv','services','Commercial_license']
 
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):

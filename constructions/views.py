@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
 from kunooz.permissions import IsConsultant
-
+import ast
 
 # Create your views here.
 
@@ -44,7 +44,41 @@ class ProjectViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin,List
             return Response(_("The user reached the limit of projects"), status=status.HTTP_406_NOT_ACCEPTABLE)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(project_owner=user)
+        project =serializer.save(project_owner=user)
+
+        users_data = request.data.get('users')
+        cleaned_string = users_data.strip('[]')
+        phone_list = cleaned_string.split(',')
+
+        if phone_list:
+            # Create ProjectMember instances for each user in the list
+            for user_number in phone_list:
+                try:
+                    user_to_add = User.objects.get(phone_number=user_number)
+
+                    # Check if the user is not the same as the requester
+                    if user_to_add == user:
+                        print('Cannot add yourself to the project')
+                        continue
+
+                    # Check if the user exists and is not a consultant
+                    if user_to_add.role == 'consultant':
+                        print('Cant add  a consultant to the project')
+                        continue
+
+                    # Check if the user is already a member of the project
+                    if ProjectMember.objects.filter(project=project, member=user_to_add).exists():
+                        print('User is already a member of the project')
+                        continue
+
+                    # Create ProjectMember only if the user exists, is a consultant, and not already a member
+                    ProjectMember.objects.create(project=project, member=user_to_add)
+                    print('User added')
+
+                except User.DoesNotExist:
+                    print('User does not exist')
+                    pass
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):

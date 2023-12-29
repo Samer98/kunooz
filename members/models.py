@@ -69,11 +69,11 @@ class User(AbstractUser):
     phone_number = PhoneNumberField(null=False, blank=False, unique=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     second_name = models.CharField(max_length=255, null=True, blank=True)
-    personal_date = models.DateField(
-        null=True,  # You can set this to True if the field is optional
-        blank=True,  # You can set this to True if the field can be left empty
-        help_text="User's personal date"
-    )
+    # personal_date = models.DateField(
+    #     null=True,  # You can set this to True if the field is optional
+    #     blank=True,  # You can set this to True if the field can be left empty
+    #     help_text="User's personal date"
+    # )
     company_name = models.CharField(max_length=255, null=True, blank=True)
     job_name = models.CharField(max_length=255, null=True, blank=True)
     profile_picture = models.ImageField(upload_to ='profile_picture',null=True, blank=True,validators=[validate_file_size])

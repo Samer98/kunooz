@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import User, VerifiedPhone
 from .serializers import ProfileSerializer, MyProfileSerializer, \
-    CustomTokenObtainPairSerializer
+    CustomTokenObtainPairSerializer, EditProfileSerializer
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from django.contrib.auth.signals import user_logged_out
@@ -55,15 +55,13 @@ class ProfileViewSet(ModelViewSet):
     def me(self, request):
 
         profile = get_object_or_404(User, id=request.user.id)
-
         if request.method == "GET":
             serializer = MyProfileSerializer(profile)
-
             return Response(serializer.data, status=status.HTTP_200_OK)
             # return Response(serializer.data)
 
         elif request.method == "PUT":
-            serializer = ProfileSerializer(profile, data=request.data)
+            serializer = EditProfileSerializer(profile, data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
