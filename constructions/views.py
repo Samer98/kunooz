@@ -63,7 +63,7 @@ class ProjectViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin,List
 
                     # Check if the user exists and is not a consultant
                     if user_to_add.role == 'consultant':
-                        print('Cant add  a consultant to the project')
+                        print('Cant add  a consultant')
                         continue
 
                     # Check if the user is already a member of the project
@@ -135,14 +135,14 @@ class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMix
 
 
     def create(self, request, *args, **kwargs):
-        phone_number = self.request.data.get('phone_number')
+        member = self.request.data.get('member')
         project_id = self.request.data.get('project')
 
         # Fetch the project
         project = get_object_or_404(Project, id=project_id)
 
         # Retrieve the user based on the phone number
-        user = get_object_or_404(User, phone_number=phone_number)
+        user = get_object_or_404(User, phone_number=member)
 
         # Check if the requesting user is trying to add themselves
         if request.user == user:
@@ -161,7 +161,7 @@ class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMix
             return Response("Can't add a consultant to your project", status=status.HTTP_400_BAD_REQUEST)
 
         # Create a new ProjectMembers entry
-        project_member = ProjectMember.objects.create(project=project, member=user, phone_number=phone_number)
+        project_member = ProjectMember.objects.create(project=project, member=user)
         serializer = ProjectMembersSerializers(project_member)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)

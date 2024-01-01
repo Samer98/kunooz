@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'django_filters',
     'members',
     'constructions',
-    'multiselectfield'
+    'multiselectfield',
+    'additional_modification'
 ]
 
 
