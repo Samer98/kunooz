@@ -8,6 +8,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from .models import AdditionalModification
+from constructions.models import Project
 from members.models import User
 from .serializers import AdditionalModificationSerializers
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
@@ -19,7 +20,7 @@ import ast
 # Create your views here.
 
 
-class AdditionalModificationViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin, GenericViewSet):
+class AdditionalModificationViewSet(ModelViewSet):
     queryset =AdditionalModification.objects.all()
     serializer_class = AdditionalModificationSerializers
     permission_classes = [IsConsultant]
@@ -29,3 +30,19 @@ class AdditionalModificationViewSet(CreateModelMixin, RetrieveModelMixin,Destroy
         if self.request.method == "GET":
             return [AllowAny()]
         return [IsConsultant()]
+
+    def create(self, request, *args, **kwargs):
+        owner = self.request.user
+        project_id = self.request.data.get('project')
+        print(project_id)
+        project = get_object_or_404(Project, id=project_id)
+        print(project)
+
+        if project.project_owner != owner:
+            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

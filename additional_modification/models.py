@@ -12,6 +12,7 @@ def validate_file_size(value):
 
 class AdditionalModification(models.Model):
     project = models.ForeignKey(Project,on_delete=models.CASCADE)
+    title = models.CharField(max_length=255,null=False,blank=False)
     file = models.FileField(upload_to ='additional_modification_files',null=True, blank=True,validators=[validate_file_size])
-
-    comment = models.CharField(max_length=255)
+    note = models.CharField(max_length=255)
+    date_created = models.DateField(auto_created=True,auto_now=True)
