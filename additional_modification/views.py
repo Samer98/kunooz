@@ -7,14 +7,14 @@ from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from .models import AdditionalModification
+from .models import AdditionalModification, Comment
 from constructions.models import Project
 from members.models import User
 from .serializers import AdditionalModificationSerializers
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
-from kunooz.permissions import IsConsultant
+from kunooz.permissions import IsConsultant, IsWorker, IsOwner
 import ast
 
 # Create your views here.
@@ -31,6 +31,22 @@ class AdditionalModificationViewSet(ModelViewSet):
             return [AllowAny()]
         return [IsConsultant()]
 
+    def retrieve(self, request, *args, **kwargs):
+        print("Hello")
+        project_id = self.kwargs.get('pk')  # Get project_name from URL
+        owner = self.request.user
+        print("$"*20,project_id)
+        project = get_object_or_404(Project, id=project_id)
+        print("$"*20,project)
+
+        if project.project_owner != owner:
+            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        records = AdditionalModification.objects.filter(project_id=project_id)
+
+        serializer = self.get_serializer(records, many=True)
+        return Response(serializer.data)
+
     def create(self, request, *args, **kwargs):
         owner = self.request.user
         project_id = self.request.data.get('project')
@@ -46,3 +62,98 @@ class AdditionalModificationViewSet(ModelViewSet):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        record = self.get_object()
+        user = request.user
+        print("record")
+        if record.project.project_owner != user:
+            return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(record, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        record = self.get_object()
+        user = request.user
+
+        print(record)
+        if record.project_owner != user:
+            return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
+
+        record.delete()
+
+
+
+
+
+
+
+class AdditionalModificationCommentViewSet(ModelViewSet):
+    queryset =Comment.objects.all()
+    serializer_class = AdditionalModificationSerializers
+    permission_classes = [IsConsultant,IsWorker,IsOwner]
+
+    def get_permissions(self):
+
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return permission_classes
+
+    def retrieve(self, request, *args, **kwargs):
+        print("Hello")
+        project_id = self.kwargs.get('pk')  # Get project_name from URL
+        owner = self.request.user
+        print("$"*20,project_id)
+        project = get_object_or_404(Project, id=project_id)
+        print("$"*20,project)
+
+        if project.project_owner != owner:
+            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        records = AdditionalModification.objects.filter(project_id=project_id)
+
+        serializer = self.get_serializer(records, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        owner = self.request.user
+        project_id = self.request.data.get('project')
+        print(project_id)
+        project = get_object_or_404(Project, id=project_id)
+        print(project)
+
+        if project.project_owner != owner:
+            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        record = self.get_object()
+        user = request.user
+        print("record")
+        if record.project.project_owner != user:
+            return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(record, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        record = self.get_object()
+        user = request.user
+
+        print(record)
+        if record.project_owner != user:
+            return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
+
+        record.delete()

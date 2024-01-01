@@ -5,7 +5,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register('AdditionalModification', views.AdditionalModificationViewSet,basename="AdditionalModification")
-# router.register('projectMembers', views.ProjectMembersViewSet,basename="projectMembers")
+router.register('AdditionalModificationComment', views.AdditionalModificationCommentViewSet,basename="AdditionalModificationComment")
 
 urlpatterns = [
               ] + router.urls
