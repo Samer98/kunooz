@@ -9,11 +9,10 @@ from rest_framework.exceptions import PermissionDenied
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super(CustomTokenObtainPairSerializer, self).validate(attrs)
-        # data.update({'id': self.user.id})
-        # data.update({'full_name': self.user.full_name})
-        # data.update({'is_asker_view': self.user.is_asker_view})
+        data.update({'id': self.user.id})
+        data.update({'first_name': self.user.first_name})
+        data.update({'role': str(self.user.role)})
         return data
-
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     def create(self, validated_data):

@@ -24,6 +24,9 @@ class Comment(models.Model):
     additional_modification = models.ForeignKey(AdditionalModification,on_delete=models.CASCADE)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     comment = models.CharField(max_length=255)
+    file = models.FileField(upload_to='additional_modification_comment_files', null=True, blank=True,
+                            validators=[validate_file_size])
+
     date_created = models.DateField(auto_created=True,auto_now=True)
 
     def __str__(self):

@@ -21,6 +21,7 @@ class Role(models.Model):
         ("User", "User"),
         ("Worker", "Worker"),
         ("Owner", "Owner"),
+
     ]
     role = models.CharField(choices=ROLE_CHOICES,max_length=255, null=True, blank=True)
 

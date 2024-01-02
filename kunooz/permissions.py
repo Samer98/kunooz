@@ -32,10 +32,10 @@ class IsUser(permissions.BasePermission):
         if str(request.user.role) == "User":
             return True
 
-# class IsUser_Worker_Owner(permissions.BasePermission):
-#     def has_permission(self, request, view):
-#         if request.method in permissions.SAFE_METHODS:
-#             return True
-#
-#         if str(request.user.role) == "User":
-#             return True
+class IsConsultant_Worker_Owner(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if str(request.user.role) == "Consultant" or str(request.user.role) == "Worker" or str(request.user.role) == "Owner":
+            return True
