@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from .models import AdditionalModification, Comment
+from .models import AdditionalModification, AdditionalModificationComment
 from constructions.models import Project, ProjectMember
 from members.models import User
 from .serializers import AdditionalModificationSerializers, AdditionalModificationCommentSerializers
@@ -91,7 +91,7 @@ class AdditionalModificationViewSet(ModelViewSet):
 
 
 class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericViewSet):
-    queryset =Comment.objects.all()
+    queryset =AdditionalModificationComment.objects.all()
     serializer_class = AdditionalModificationCommentSerializers
     permission_classes = [IsConsultant_Worker_Owner]
 
@@ -113,7 +113,7 @@ class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,G
         if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
-        records = Comment.objects.filter(additional_modification=additional_modification_id)
+        records = AdditionalModificationComment.objects.filter(additional_modification=additional_modification_id)
 
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)

@@ -20,7 +20,7 @@ class AdditionalModification(models.Model):
     def __str__(self):
         return  str(self.project) + " | " + str(self.title)
 
-class Comment(models.Model):
+class AdditionalModificationComment(models.Model):
     additional_modification = models.ForeignKey(AdditionalModification,on_delete=models.CASCADE)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     comment = models.CharField(max_length=255)

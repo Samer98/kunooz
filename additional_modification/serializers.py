@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AdditionalModification , Comment
+from .models import AdditionalModification , AdditionalModificationComment
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class AdditionalModificationSerializers(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class AdditionalModificationCommentSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
     user = serializers.CharField(read_only=True)
     class Meta:
-        model = Comment
+        model = AdditionalModificationComment
         fields = ['id','user','additional_modification','file','comment','date_created']
 
 

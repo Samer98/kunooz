@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'members',
     'constructions',
     'additional_modification',
+    'progress_step',
     'multiselectfield',
 ]
 
