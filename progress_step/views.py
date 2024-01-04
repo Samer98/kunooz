@@ -21,6 +21,7 @@ from kunooz.permissions import IsConsultant, IsWorker, IsOwner, IsConsultant_Wor
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Max
 
+
 # Create your views here.
 
 
@@ -43,7 +44,6 @@ class ProgressStepViewSet(ModelViewSet):
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
 
-
         if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
@@ -59,53 +59,41 @@ class ProgressStepViewSet(ModelViewSet):
 
         self.queryset = queryset
         return super().list(request, *args, **kwargs)
+
     def create(self, request, *args, **kwargs):
+        steps_limit = 10
         user = self.request.user
         parent = self.request.data.get('parent')
         project_id = self.request.data.get('project')
 
         if not project_id or not project_id.isdigit():
             return Response("project_id cant be none or letters ", status=status.HTTP_400_BAD_REQUEST)
-        print("parent"*3,parent)
-
 
         project = get_object_or_404(Project, id=project_id)
-        main_project_steps_count = ProgressStep.objects.filter(project_id=project_id,parent=None).count()
-        print(main_project_steps_count)
+        main_project_steps_count = ProgressStep.objects.filter(project_id=project_id, parent=None).count()
+
         if parent:
             sub_steps_count = ProgressStep.objects.filter(parent=parent).count()
-            main_project_steps_count = ProgressStep.objects.filter(project_id=project_id,parent=parent).count()
-
-
-        print(project)
-        print(project_id)
+            main_project_steps_count = ProgressStep.objects.filter(project_id=project_id, parent=parent).count()
+            last_order = ProgressStep.objects.filter(parent=parent).aggregate(Max('order'))['order__max']
+            order = last_order + 1 if last_order is not None else 0
+        else:
+            last_order = ProgressStep.objects.filter(project_id=project_id, parent__isnull=True).aggregate(Max('order'))[
+                    'order__max']
+            order = last_order + 1 if last_order is not None else 0
 
         if project.project_owner != user:
             return Response("Not the owner of the project ", status=status.HTTP_400_BAD_REQUEST)
 
-        # if not parent and project.project_owner != user:
-        #     return Response("Cant Create main Step", status=status.HTTP_400_BAD_REQUEST)
-
-        if not parent and main_project_steps_count > 10:
+        if not parent and main_project_steps_count > steps_limit:
             return Response("The main steps exceeded 10", status=status.HTTP_400_BAD_REQUEST)
 
-        if parent and sub_steps_count > 10:
+        if parent and sub_steps_count > steps_limit:
             return Response("The sub steps exceeded 10", status=status.HTTP_400_BAD_REQUEST)
 
-        if parent:
-            # If the user sent a parent ID, get the last order of child steps under that parent
-            last_order = ProgressStep.objects.filter(parent=parent).aggregate(Max('order'))['order__max']
-            order = last_order + 1 if last_order is not None else 0
-        else:
-            # If no parent ID sent, get the last order of main steps in the project
-            last_order = ProgressStep.objects.filter(project_id=project_id, parent__isnull=True).aggregate(Max('order'))[
-                'order__max']
-            order = last_order + 1 if last_order is not None else 0
-
-        print(order)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=user,order=order)
+        serializer.save(user=user, order=order)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
