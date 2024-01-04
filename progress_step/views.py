@@ -35,6 +35,30 @@ class ProgressStepViewSet(ModelViewSet):
             return [IsConsultant_Worker_Owner()]
         return [IsConsultant()]
 
+    def list(self, request, *args, **kwargs):
+        user = self.request.user
+        queryset = self.queryset
+        parent = self.request.query_params.get('parent')
+        project_id = self.request.query_params.get('project_id')
+        project = get_object_or_404(Project, id=project_id)
+        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
+
+
+        if not project_member and project.project_owner != user:
+            return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        if not project_id or not project_id.isdigit():
+            return Response("project id cant be none or letters", status=status.HTTP_400_BAD_REQUEST)
+
+        queryset = queryset.filter(project_id=project_id)
+
+        if parent:
+            queryset = queryset.filter(parent=parent)
+        else:
+            queryset = queryset.filter(parent=None)
+
+        self.queryset = queryset
+        return super().list(request, *args, **kwargs)
     def create(self, request, *args, **kwargs):
         user = self.request.user
         parent = self.request.data.get('parent')
