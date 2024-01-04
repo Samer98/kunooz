@@ -13,10 +13,10 @@ def validate_file_size(value):
         raise ValidationError('File size cannot exceed 10MB.')
 
 
-class AdditionalModification(models.Model):
+class Approval(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     title = models.CharField(max_length=255, null=False, blank=False)
-    file = models.FileField(upload_to='additional_modification_files', null=True, blank=True,
+    file = models.FileField(upload_to='approval_files', null=True, blank=True,
                             validators=[validate_file_size])
     note = models.CharField(max_length=255)
     date_created = models.DateField(auto_created=True, auto_now=True)
@@ -25,14 +25,14 @@ class AdditionalModification(models.Model):
         return str(self.project) + " | " + str(self.title)
 
 
-class AdditionalModificationComment(models.Model):
-    additional_modification = models.ForeignKey(AdditionalModification, on_delete=models.CASCADE)
+class ApprovalComment(models.Model):
+    approval = models.ForeignKey(Approval, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.CharField(max_length=255)
-    file = models.FileField(upload_to='additional_modification_comment_files', null=True, blank=True,
+    file = models.FileField(upload_to='approval_comment_files', null=True, blank=True,
                             validators=[validate_file_size])
 
     date_created = models.DateField(auto_created=True, auto_now=True)
 
     def __str__(self):
-        return str(self.additional_modification) + " | " + str(self.comment)
+        return str(self.approval) + " | " + str(self.comment)

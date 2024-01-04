@@ -39,6 +39,7 @@ class ProjectViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin,List
     def create(self, request, *args, **kwargs):
         user = self.request.user
         print(user)
+
         projects_count = Project.objects.filter(project_owner=user).count()
         if projects_count >= user.projects_limits:
             return Response(_("The user reached the limit of projects"), status=status.HTTP_406_NOT_ACCEPTABLE)

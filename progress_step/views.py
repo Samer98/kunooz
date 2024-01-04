@@ -20,6 +20,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Max
 from django.db import transaction
 from typing import List, Tuple
+
+
 # Create your views here.
 
 
@@ -75,8 +77,9 @@ class ProgressStepViewSet(ModelViewSet):
             last_order = ProgressStep.objects.filter(parent=parent).aggregate(Max('order'))['order__max']
             order = last_order + 1 if last_order is not None else 0
         else:
-            last_order = ProgressStep.objects.filter(project_id=project_id, parent__isnull=True).aggregate(Max('order'))[
-                    'order__max']
+            last_order = \
+            ProgressStep.objects.filter(project_id=project_id, parent__isnull=True).aggregate(Max('order'))[
+                'order__max']
             order = last_order + 1 if last_order is not None else 0
 
         if project.project_owner != user:
@@ -87,7 +90,6 @@ class ProgressStepViewSet(ModelViewSet):
 
         if parent and sub_steps_count >= steps_limit:
             raise PermissionDenied("The sub steps exceeded 10")
-
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -140,12 +142,12 @@ class ProgressStepViewSet(ModelViewSet):
                 parent.is_finished = False
                 parent.save()
 
-
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
         return Response(serializer.data)
+
     @action(detail=False, methods=['post'])
     def reorder(self, request):
         ids = request.data.get('ids', [])
@@ -160,7 +162,7 @@ class ProgressStepViewSet(ModelViewSet):
         if len(set(ids)) != len(ids):
             raise PermissionDenied("All elements in the list must be  unique.")
 
-        progress_steps = ProgressStep.objects.filter(project_id=project_id,parent=None)
+        progress_steps = ProgressStep.objects.filter(project_id=project_id, parent=None)
         if len(progress_steps) != len(ids):
             raise PermissionDenied("Length of ids is not right")
 
@@ -179,11 +181,12 @@ class ProgressStepViewSet(ModelViewSet):
                 progress_step.order = index
                 progress_step.save()
 
-        return Response({"message":f"Project{project_id}, ProgressStep order updated successfully",
-                         "new_order":ids}, status=status.HTTP_200_OK)
+        return Response({"message": f"Project{project_id}, ProgressStep order updated successfully",
+                         "new_order": ids}, status=status.HTTP_200_OK)
 
-class ProgressStepCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericViewSet):
-    queryset =ProgressStepComment.objects.all()
+
+class ProgressStepCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
+    queryset = ProgressStepComment.objects.all()
     serializer_class = ProgressStepCommentSerializers
     permission_classes = [IsConsultant_Worker_Owner]
 
@@ -191,7 +194,7 @@ class ProgressStepCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericView
         print("Hello")
         sub_step_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
-        sub_step = get_object_or_404(ProgressStep,id=sub_step_id)
+        sub_step = get_object_or_404(ProgressStep, id=sub_step_id)
         project_id = sub_step.project_id
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
@@ -208,14 +211,14 @@ class ProgressStepCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericView
         user = self.request.user
         # project_id = self.request.data.get('project')
         sub_step_id = self.request.data.get('sub_step')
-        sub_step = get_object_or_404(ProgressStep,id = sub_step_id)
+        sub_step = get_object_or_404(ProgressStep, id=sub_step_id)
         print(sub_step)
 
         project = get_object_or_404(Project, id=sub_step.project_id)
         print(project)
 
-        project_member = ProjectMember.objects.filter(project_id=project.id,member=user)
-        if not project_member and project.project_owner != user :
+        project_member = ProjectMember.objects.filter(project_id=project.id, member=user)
+        if not project_member and project.project_owner != user:
             raise PermissionDenied("Not a member of the project")
 
         serializer = self.get_serializer(data=request.data)

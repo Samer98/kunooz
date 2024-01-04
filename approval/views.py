@@ -7,10 +7,10 @@ from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from .models import AdditionalModification, AdditionalModificationComment
+from .models import Approval, ApprovalComment
 from constructions.models import Project, ProjectMember
 from members.models import User
-from .serializers import AdditionalModificationSerializers, AdditionalModificationCommentSerializers
+from .serializers import ApprovalSerializers, ApprovalCommentSerializers
 from django.db.models import Q
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
@@ -19,9 +19,9 @@ from django.utils.dateparse import parse_date
 # Create your views here.
 
 
-class AdditionalModificationViewSet(ModelViewSet):
-    queryset =AdditionalModification.objects.all()
-    serializer_class = AdditionalModificationSerializers
+class ApprovalViewSet(ModelViewSet):
+    queryset =Approval.objects.all()
+    serializer_class = ApprovalSerializers
     permission_classes = [IsConsultant]
 
     def get_permissions(self):
@@ -43,7 +43,7 @@ class AdditionalModificationViewSet(ModelViewSet):
                 return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
 
 
-        records = AdditionalModification.objects.filter(project_id=project_id)
+        records = Approval.objects.filter(project_id=project_id)
 
         if name_filter:
             records = records.filter(title__icontains=name_filter)
@@ -101,21 +101,16 @@ class AdditionalModificationViewSet(ModelViewSet):
 
 
 
-class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericViewSet):
-    queryset =AdditionalModificationComment.objects.all()
-    serializer_class = AdditionalModificationCommentSerializers
+class ApprovalCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericViewSet):
+    queryset =ApprovalComment.objects.all()
+    serializer_class = ApprovalCommentSerializers
     permission_classes = [IsConsultant_Worker_Owner]
 
-    # def get_permissions(self):
-    #
-    #     if self.request.method == "GET":
-    #         return [AllowAny()]
-    #     return self.permission_classes
 
     def retrieve(self, request, *args, **kwargs):
         additional_modification_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
-        additional_modification = get_object_or_404(AdditionalModification,id=additional_modification_id)
+        additional_modification = get_object_or_404(ApprovalComment,id=additional_modification_id)
         project_id = additional_modification.project_id
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
@@ -123,7 +118,7 @@ class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,G
         if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
-        records = AdditionalModificationComment.objects.filter(additional_modification=additional_modification_id)
+        records = ApprovalComment.objects.filter(additional_modification=additional_modification_id)
 
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)
@@ -142,27 +137,6 @@ class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,G
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # def update(self, request, *args, **kwargs):
-    #     record = self.get_object()
-    #     user = request.user
-    #     print("record")
-    #     if record.project.project_owner != user:
-    #         return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
-    #
-    #     serializer = self.get_serializer(record, data=request.data, partial=True)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #
-    #     return Response(serializer.data)
 
-    # def delete(self, request, *args, **kwargs):
-    #     record = self.get_object()
-    #     user = request.user
-    #
-    #     print(record)
-    #     if record.project_owner != user:
-    #         return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
-    #
-    #     record.delete()
 
 
