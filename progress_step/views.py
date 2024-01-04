@@ -1,6 +1,4 @@
-from django.shortcuts import render
-
-# Create your views here.
+from rest_framework.decorators import action
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied
@@ -20,7 +18,7 @@ from django.utils.translation import gettext as _
 from kunooz.permissions import IsConsultant, IsWorker, IsOwner, IsConsultant_Worker_Owner
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Max
-
+from django.db import transaction
 
 # Create your views here.
 
@@ -150,7 +148,38 @@ class ProgressStepViewSet(ModelViewSet):
         self.perform_update(serializer)
 
         return Response(serializer.data)
+    @action(detail=False, methods=['post'])
+    def reorder(self, request):
+        ids = request.data.get('ids', [])
+        project_id = request.data.get("project_id")
 
+        project = get_object_or_404(Project, id=project_id)
+        user = request.user
+
+        # Ensure the user is the owner of the project
+        if project.project_owner != user:
+            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        # Fetch all progress steps for the given project
+        progress_steps = ProgressStep.objects.filter(project_id=project_id,parent=None)
+        print(progress_steps)
+        # Create a dictionary mapping ID to the corresponding instance
+        id_to_instance = {step.id: step for step in progress_steps}
+        print(len(id_to_instance))
+
+        # Validate the provided IDs
+        for step_id in ids:
+            if step_id not in id_to_instance:
+                return Response(f"Invalid ProgressStep ID: {step_id}", status=status.HTTP_400_BAD_REQUEST)
+
+        # Reorder the instances based on the provided list of IDs
+        with transaction.atomic():
+            for index, step_id in enumerate(ids):
+                progress_step = id_to_instance[step_id]
+                progress_step.order = index
+                progress_step.save()
+
+        return Response("ProgressStep order updated successfully", status=status.HTTP_200_OK)
 
 class ProgressStepCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericViewSet):
     queryset =ProgressStepComment.objects.all()
