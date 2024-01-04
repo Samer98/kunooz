@@ -19,7 +19,7 @@ from kunooz.permissions import IsConsultant, IsWorker, IsOwner, IsConsultant_Wor
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Max
 from django.db import transaction
-
+from typing import List, Tuple
 # Create your views here.
 
 
@@ -43,10 +43,9 @@ class ProgressStepViewSet(ModelViewSet):
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
 
         if not project_member and project.project_owner != user:
-            return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
-
+            raise PermissionDenied("Not a member of the project")
         if not project_id or not project_id.isdigit():
-            return Response("project id cant be none or letters", status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied("project id cant be none or letters")
 
         queryset = queryset.filter(project_id=project_id)
 
@@ -65,7 +64,7 @@ class ProgressStepViewSet(ModelViewSet):
         project_id = self.request.data.get('project')
 
         if not project_id or not project_id.isdigit():
-            return Response("project_id cant be none or letters ", status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied("project_id cant be none or letters")
 
         project = get_object_or_404(Project, id=project_id)
         main_project_steps_count = ProgressStep.objects.filter(project_id=project_id, parent=None).count()
@@ -81,13 +80,13 @@ class ProgressStepViewSet(ModelViewSet):
             order = last_order + 1 if last_order is not None else 0
 
         if project.project_owner != user:
-            return Response("Not the owner of the project ", status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied("Not the owner of the project ")
 
         if not parent and main_project_steps_count >= steps_limit:
-            return Response("The main steps exceeded 10", status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied("The main steps exceeded 10")
 
         if parent and sub_steps_count >= steps_limit:
-            return Response("The sub steps exceeded 10", status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied("The sub steps exceeded 10")
 
 
         serializer = self.get_serializer(data=request.data)
@@ -102,8 +101,7 @@ class ProgressStepViewSet(ModelViewSet):
         project = instance.project
 
         if project.project_owner != user:
-            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
-
+            raise PermissionDenied("Not the owner of the project")
         # Implement additional conditions if needed before deletion
 
         self.perform_destroy(instance)
@@ -118,7 +116,7 @@ class ProgressStepViewSet(ModelViewSet):
         # return Response("hey")
 
         if project.project_owner != user:
-            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied("Not the owner of the project")
 
         is_finished = request.data.get('is_finished', None)
 
@@ -158,19 +156,21 @@ class ProgressStepViewSet(ModelViewSet):
 
         # Ensure the user is the owner of the project
         if project.project_owner != user:
-            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied("Not the owner of the project")
+        if len(set(ids)) != len(ids):
+            raise PermissionDenied("All elements in the list must be  unique.")
 
-        # Fetch all progress steps for the given project
         progress_steps = ProgressStep.objects.filter(project_id=project_id,parent=None)
-        print(progress_steps)
+        if len(progress_steps) != len(ids):
+            raise PermissionDenied("Length of ids is not right")
+
         # Create a dictionary mapping ID to the corresponding instance
         id_to_instance = {step.id: step for step in progress_steps}
-        print(len(id_to_instance))
 
         # Validate the provided IDs
         for step_id in ids:
             if step_id not in id_to_instance:
-                return Response(f"Invalid ProgressStep ID: {step_id}", status=status.HTTP_400_BAD_REQUEST)
+                raise PermissionDenied(f"Invalid ProgressStep ID: {step_id}")
 
         # Reorder the instances based on the provided list of IDs
         with transaction.atomic():
@@ -179,7 +179,8 @@ class ProgressStepViewSet(ModelViewSet):
                 progress_step.order = index
                 progress_step.save()
 
-        return Response("ProgressStep order updated successfully", status=status.HTTP_200_OK)
+        return Response({"message":f"Project{project_id}, ProgressStep order updated successfully",
+                         "new_order":ids}, status=status.HTTP_200_OK)
 
 class ProgressStepCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericViewSet):
     queryset =ProgressStepComment.objects.all()
