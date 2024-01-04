@@ -5,7 +5,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register('ProgressStep', views.ProgressStepViewSet,basename="ProgressStep")
-# router.register('projectMembers', views.ProjectMembersViewSet,basename="projectMembers")
+router.register('ProgressStepComment', views.ProgressStepCommentViewSet,basename="ProgressStepComment")
 
 urlpatterns = [
               ] + router.urls

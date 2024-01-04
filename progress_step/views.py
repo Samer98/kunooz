@@ -150,3 +150,75 @@ class ProgressStepViewSet(ModelViewSet):
         self.perform_update(serializer)
 
         return Response(serializer.data)
+
+
+class ProgressStepCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericViewSet):
+    queryset =ProgressStepComment.objects.all()
+    serializer_class = ProgressStepCommentSerializers
+    permission_classes = [IsConsultant_Worker_Owner]
+
+    # def get_permissions(self):
+    #
+    #     if self.request.method == "GET":
+    #         return [AllowAny()]
+    #     return self.permission_classes
+
+    def retrieve(self, request, *args, **kwargs):
+        print("Hello")
+        sub_step_id = self.kwargs.get('pk')  # Get project_name from URL
+        user = self.request.user
+        sub_step = get_object_or_404(ProgressStep,id=sub_step_id)
+        project_id = sub_step.project_id
+        project = get_object_or_404(Project, id=project_id)
+        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
+
+        if not project_member and project.project_owner != user:
+            return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        records = ProgressStepComment.objects.filter(sub_step=sub_step.id)
+
+        serializer = self.get_serializer(records, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        # project_id = self.request.data.get('project')
+        sub_step_id = self.request.data.get('sub_step')
+        sub_step = get_object_or_404(ProgressStep,id = sub_step_id)
+        print(sub_step)
+
+        project = get_object_or_404(Project, id=sub_step.project_id)
+        print(project)
+
+        project_member = ProjectMember.objects.filter(project_id=project.id,member=user)
+        if not project_member and project.project_owner != user :
+            return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=user)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    # def update(self, request, *args, **kwargs):
+    #     record = self.get_object()
+    #     user = request.user
+    #     print("record")
+    #     if record.project.project_owner != user:
+    #         return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
+    #
+    #     serializer = self.get_serializer(record, data=request.data, partial=True)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #
+    #     return Response(serializer.data)
+
+    # def delete(self, request, *args, **kwargs):
+    #     record = self.get_object()
+    #     user = request.user
+    #
+    #     print(record)
+    #     if record.project_owner != user:
+    #         return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
+    #
+    #     record.delete()

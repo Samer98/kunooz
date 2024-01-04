@@ -11,9 +11,16 @@ class AdditionalModificationSerializers(serializers.ModelSerializer):
 
 class AdditionalModificationCommentSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
-    user = serializers.CharField(read_only=True)
+    user = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = AdditionalModificationComment
         fields = ['id','user','additional_modification','file','comment','date_created']
 
-
+    def get_user(self, obj):
+        if obj.user:
+            return {
+                'id': obj.user.id,
+                'first_name': obj.user.first_name,
+                'phone_number': str(obj.user.phone_number)
+            }
+        return None

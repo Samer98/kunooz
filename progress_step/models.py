@@ -28,7 +28,7 @@ class ProgressStepComment(models.Model):
     sub_step = models.ForeignKey(ProgressStep, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.CharField(max_length=255)
-    file = models.FileField(upload_to='additional_modification_comment_files', null=True, blank=True,
+    file = models.FileField(upload_to='progress_sub_step_comment_files', null=True, blank=True,
                             validators=[validate_file_size])
 
     date_created = models.DateField(auto_created=True, auto_now=True)
