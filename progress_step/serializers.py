@@ -7,7 +7,7 @@ class ProgressStepSerializers(serializers.ModelSerializer):
     order = serializers.IntegerField(read_only=True)
     class Meta:
         model = ProgressStep
-        fields = ['id','title','project',"parent","order"]
+        fields = ['id','title','project',"parent","order","is_finished"]
 
 
 class ProgressStepCommentSerializers(serializers.ModelSerializer):

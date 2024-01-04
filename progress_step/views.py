@@ -85,10 +85,10 @@ class ProgressStepViewSet(ModelViewSet):
         if project.project_owner != user:
             return Response("Not the owner of the project ", status=status.HTTP_400_BAD_REQUEST)
 
-        if not parent and main_project_steps_count > steps_limit:
+        if not parent and main_project_steps_count >= steps_limit:
             return Response("The main steps exceeded 10", status=status.HTTP_400_BAD_REQUEST)
 
-        if parent and sub_steps_count > steps_limit:
+        if parent and sub_steps_count >= steps_limit:
             return Response("The sub steps exceeded 10", status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -97,3 +97,56 @@ class ProgressStepViewSet(ModelViewSet):
         serializer.save(user=user, order=order)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user = self.request.user
+        project = instance.project
+
+        if project.project_owner != user:
+            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        # Implement additional conditions if needed before deletion
+
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user = self.request.user
+        project = instance.project
+        # print(instance)
+        # print(instance.project)
+        # return Response("hey")
+
+        if project.project_owner != user:
+            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        is_finished = request.data.get('is_finished', None)
+
+        if is_finished is not None:
+            instance.is_finished = is_finished
+            instance.save()
+
+        if instance.parent:
+            parent = instance.parent
+            total_children = ProgressStep.objects.filter(parent=parent).count()
+            finished_children = ProgressStep.objects.filter(parent=parent, is_finished=True).count()
+            print(parent)
+            print(total_children)
+            print(finished_children)
+            if total_children == finished_children:
+                # Update the parent step as finished
+                parent.is_finished = True
+                parent.save()
+            else:
+                # Update the parent step as not finished
+                parent.is_finished = False
+                parent.save()
+
+
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
