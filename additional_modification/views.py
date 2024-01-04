@@ -15,8 +15,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
 from kunooz.permissions import IsConsultant, IsWorker, IsOwner, IsConsultant_Worker_Owner
-from rest_framework_simplejwt.views import TokenObtainPairView
-
+from django.utils.dateparse import parse_date
 # Create your views here.
 
 
@@ -28,21 +27,32 @@ class AdditionalModificationViewSet(ModelViewSet):
     def get_permissions(self):
 
         if self.request.method == "GET":
-            return [AllowAny()]
+            return [IsConsultant_Worker_Owner()]
         return [IsConsultant()]
 
     def retrieve(self, request, *args, **kwargs):
-        print("Hello")
         project_id = self.kwargs.get('pk')  # Get project_name from URL
         owner = self.request.user
-        print("$"*20,project_id)
         project = get_object_or_404(Project, id=project_id)
-        print("$"*20,project)
+
+        name_filter = self.request.query_params.get('title')
+        date_filter = self.request.query_params.get('date')
 
         if project.project_owner != owner:
             return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
 
+
         records = AdditionalModification.objects.filter(project_id=project_id)
+
+        if name_filter:
+            records = records.filter(title__icontains=name_filter)
+
+        if date_filter:
+            try:
+                parsed_date = parse_date(date_filter)
+                records = records.filter(date_created=parsed_date)  # Replace 'date_field' with your actual date field
+            except ValueError:
+                raise PermissionDenied("Invalid date format. Use YYYY-MM-DD")
 
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)
@@ -66,7 +76,6 @@ class AdditionalModificationViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         record = self.get_object()
         user = request.user
-        print("record")
         if record.project.project_owner != user:
             return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
 
@@ -102,7 +111,6 @@ class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,G
     #     return self.permission_classes
 
     def retrieve(self, request, *args, **kwargs):
-        print("Hello")
         additional_modification_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
         additional_modification = get_object_or_404(AdditionalModification,id=additional_modification_id)

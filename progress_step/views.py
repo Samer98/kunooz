@@ -187,12 +187,6 @@ class ProgressStepCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericView
     serializer_class = ProgressStepCommentSerializers
     permission_classes = [IsConsultant_Worker_Owner]
 
-    # def get_permissions(self):
-    #
-    #     if self.request.method == "GET":
-    #         return [AllowAny()]
-    #     return self.permission_classes
-
     def retrieve(self, request, *args, **kwargs):
         print("Hello")
         sub_step_id = self.kwargs.get('pk')  # Get project_name from URL
@@ -203,7 +197,7 @@ class ProgressStepCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericView
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
 
         if not project_member and project.project_owner != user:
-            return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied("Not a member of the project")
 
         records = ProgressStepComment.objects.filter(sub_step=sub_step.id)
 
@@ -222,33 +216,10 @@ class ProgressStepCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericView
 
         project_member = ProjectMember.objects.filter(project_id=project.id,member=user)
         if not project_member and project.project_owner != user :
-            return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
+            raise PermissionDenied("Not a member of the project")
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=user)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    # def update(self, request, *args, **kwargs):
-    #     record = self.get_object()
-    #     user = request.user
-    #     print("record")
-    #     if record.project.project_owner != user:
-    #         return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
-    #
-    #     serializer = self.get_serializer(record, data=request.data, partial=True)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #
-    #     return Response(serializer.data)
-
-    # def delete(self, request, *args, **kwargs):
-    #     record = self.get_object()
-    #     user = request.user
-    #
-    #     print(record)
-    #     if record.project_owner != user:
-    #         return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
-    #
-    #     record.delete()
