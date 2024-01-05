@@ -81,7 +81,7 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to ='profile_picture',null=True, blank=True,validators=[validate_file_size])
     introduction = models.TextField(null=True, blank=True)
     cv = models.FileField(validators=[validate_file_size],null=True,blank=True)
-    role = models.ForeignKey(Role,on_delete=models.PROTECT,default=None)
+    role = models.ForeignKey(Role,on_delete=models.PROTECT,blank=True,null=True)
     services = MultiSelectField(choices=MY_SERVICES_CHOICES,max_length=20,default="None")
     Commercial_license = models.FileField(validators=[validate_file_size],null=True,blank=True)
 
