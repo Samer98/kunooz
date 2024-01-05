@@ -16,11 +16,13 @@ from rest_framework.response import Response
 from django.utils.translation import gettext as _
 from kunooz.permissions import IsConsultant, IsWorker, IsOwner, IsConsultant_Worker_Owner
 from django.utils.dateparse import parse_date
+
+
 # Create your views here.
 
 
 class AdditionalModificationViewSet(ModelViewSet):
-    queryset =AdditionalModification.objects.all()
+    queryset = AdditionalModification.objects.all()
     serializer_class = AdditionalModificationSerializers
     permission_classes = [IsConsultant]
 
@@ -40,8 +42,7 @@ class AdditionalModificationViewSet(ModelViewSet):
         end_date_filter = self.request.query_params.get('end_date')
 
         if project.project_owner != owner:
-                return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
-
+            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
 
         records = AdditionalModification.objects.filter(project_id=project_id)
 
@@ -98,11 +99,8 @@ class AdditionalModificationViewSet(ModelViewSet):
         record.delete()
 
 
-
-
-
-class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericViewSet):
-    queryset =AdditionalModificationComment.objects.all()
+class AdditionalModificationCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
+    queryset = AdditionalModificationComment.objects.all()
     serializer_class = AdditionalModificationCommentSerializers
     permission_classes = [IsConsultant_Worker_Owner]
 
@@ -115,7 +113,7 @@ class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,G
     def retrieve(self, request, *args, **kwargs):
         additional_modification_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
-        additional_modification = get_object_or_404(AdditionalModification,id=additional_modification_id)
+        additional_modification = get_object_or_404(AdditionalModification, id=additional_modification_id)
         project_id = additional_modification.project_id
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
@@ -132,8 +130,8 @@ class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,G
         user = self.request.user
         project_id = self.request.data.get('project')
         project = get_object_or_404(Project, id=project_id)
-        project_member = ProjectMember.objects.filter(project_id=project_id,member=user)
-        if not project_member and project.project_owner != user :
+        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
+        if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.get_serializer(data=request.data)
@@ -164,5 +162,3 @@ class AdditionalModificationCommentViewSet(RetrieveModelMixin,CreateModelMixin,G
     #         return Response(_("You are not the owner of this record"), status=status.HTTP_403_FORBIDDEN)
     #
     #     record.delete()
-
-

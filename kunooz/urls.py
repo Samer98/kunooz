@@ -31,5 +31,6 @@ urlpatterns = [
     path('constructions/', include('constructions.urls')),
     path('additional_modification/', include('additional_modification.urls')),
     path('progress_step/', include('progress_step.urls')),
+    path('approval/', include('approval.urls')),
 
 ]

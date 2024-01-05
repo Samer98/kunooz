@@ -108,17 +108,17 @@ class ApprovalCommentViewSet(RetrieveModelMixin,CreateModelMixin,GenericViewSet)
 
 
     def retrieve(self, request, *args, **kwargs):
-        additional_modification_id = self.kwargs.get('pk')  # Get project_name from URL
+        approval_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
-        additional_modification = get_object_or_404(ApprovalComment,id=additional_modification_id)
-        project_id = additional_modification.project_id
+        approval = get_object_or_404(Approval,id=approval_id)
+        project_id = approval.project_id
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
 
         if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
-        records = ApprovalComment.objects.filter(additional_modification=additional_modification_id)
+        records = ApprovalComment.objects.filter(approval=approval_id)
 
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)
