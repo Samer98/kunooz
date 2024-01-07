@@ -14,7 +14,7 @@ class ReportCommentSerializers(serializers.ModelSerializer):
     user = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = ReportComment
-        fields = ['id','user','approval','file','comment','date_created']
+        fields = ['id','user','report','file','comment','date_created']
 
     def get_user(self, obj):
         if obj.user:

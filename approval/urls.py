@@ -4,8 +4,8 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register('Report', views.ApprovalViewSet,basename="Report")
-router.register('ReportComment', views.ApprovalCommentViewSet,basename="ReportComment")
+router.register('Approval', views.ApprovalViewSet,basename="Approval")
+router.register('ApprovalComment', views.ApprovalCommentViewSet,basename="ApprovalComment")
 
 urlpatterns = [
               ] + router.urls
