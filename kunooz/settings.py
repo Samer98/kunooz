@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'approval',
     'report',
     'note',
+    'offer_price',
 
 
 

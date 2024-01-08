@@ -34,5 +34,6 @@ urlpatterns = [
     path('approval/', include('approval.urls')),
     path('report/', include('report.urls')),
     path('note/', include('note.urls')),
+    path('offer_price/', include('offer_price.urls')),
 
 ]

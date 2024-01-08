@@ -1,19 +1,19 @@
 from rest_framework import serializers
-from .models import Note, NoteComment
+from .models import OfferPrice, OfferPriceComment
 
-class NoteSerializers(serializers.ModelSerializer):
+class OfferPriceSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
     class Meta:
-        model = Note
-        fields = ['id','project','title','note','file','date_created']
+        model = OfferPrice
+        fields = ['id','project','worker_name','note','file','date_created']
 
 
-class NoteCommentSerializers(serializers.ModelSerializer):
+class OfferPriceCommentSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
     user = serializers.SerializerMethodField(read_only=True)
     class Meta:
-        model = NoteComment
-        fields = ['id','user','note','file','comment','date_created']
+        model = OfferPriceComment
+        fields = ['id','user','offer_price','file','comment','date_created']
 
     def get_user(self, obj):
         if obj.user:
