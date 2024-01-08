@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'progress_step',
     'approval',
     'report',
+    'note',
 
 
 

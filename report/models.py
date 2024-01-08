@@ -19,9 +19,9 @@ class Report(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
     project_duration = models.CharField(max_length=255, null=True, blank=True)
     bid_price = models.IntegerField(validators=[MinValueValidator(0)])
-    file = models.FileField(upload_to='approval_files', null=True, blank=True,
+    file = models.FileField(upload_to='report_files', null=True, blank=True,
                             validators=[validate_file_size])
-    note = models.CharField(max_length=255)
+    note = models.TextField()
     date_created = models.DateField(auto_created=True, auto_now=True)
 
     def __str__(self):
@@ -31,11 +31,11 @@ class Report(models.Model):
 class ReportComment(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.CharField(max_length=255)
-    file = models.FileField(upload_to='approval_comment_files', null=True, blank=True,
+    comment = models.TextField()
+    file = models.FileField(upload_to='report_comment_files', null=True, blank=True,
                             validators=[validate_file_size])
 
     date_created = models.DateField(auto_created=True, auto_now=True)
 
     def __str__(self):
-        return str(self.approval) + " | " + str(self.comment)
+        return str(self.report) + " | " + str(self.comment)

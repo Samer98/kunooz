@@ -33,5 +33,6 @@ urlpatterns = [
     path('progress_step/', include('progress_step.urls')),
     path('approval/', include('approval.urls')),
     path('report/', include('report.urls')),
+    path('note/', include('note.urls')),
 
 ]
