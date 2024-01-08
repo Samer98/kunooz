@@ -28,6 +28,7 @@ import string
 from rest_framework.exceptions import PermissionDenied
 from django.utils.translation import gettext as _
 
+
 # Create your views here.
 
 # Function to generate a random OTP
@@ -168,14 +169,22 @@ def IsVerified(request):
         raise PermissionDenied("This phone number not verified")
 
 
+from kunooz.settings import account_sid, auth_token, verify_sid, verified_number
+from twilio.rest import Client
+
+client = Client(account_sid, auth_token)
+
+
+def send_sms(mobile,OTP_Code):
+    message = client.messages.create(from_='+12548703291',
+                                     body=f'OTP IS {OTP_Code}',
+                                     to=mobile)
 
 
 @api_view(['POST'])
 def PreRegister(request):
     requested_phone_number = request.data.get("phone_number")
-    print(requested_phone_number)
     phone_in_table = VerifiedPhone.objects.filter(phone_number=requested_phone_number)
-    print(phone_in_table)
     if phone_in_table:
         phone_number = phone_in_table[0]
         if phone_number.is_verified:
@@ -190,6 +199,7 @@ def PreRegister(request):
             phone_number.save()
 
             print(otp_code)
+            send_sms(requested_phone_number,otp_code)
             # Here, you might send the OTP via SMS or other means
             return Response("OTP has been sent", status=status.HTTP_200_OK)
     else:
@@ -202,14 +212,16 @@ def PreRegister(request):
             otp=otp_code,
             expires_at=expiration_time
         )
-        print(otp_code)
+        send_sms(requested_phone_number, otp_code)
         # Here, you might send the OTP via SMS or other means
         return Response("The account has been created OTP has been sent", status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 def SendOTP(request):
     requested_phone_number = request.data.get("phone_number")
     print(requested_phone_number)
-    phone_in_table = get_object_or_404(VerifiedPhone,phone_number=requested_phone_number)
+    phone_in_table = get_object_or_404(VerifiedPhone, phone_number=requested_phone_number)
     print(phone_in_table)
     if phone_in_table.is_verified:
         return Response("This phone number is verified", status=status.HTTP_200_OK)
@@ -222,9 +234,10 @@ def SendOTP(request):
         phone_in_table.save()
 
         print(otp_code)
+        send_sms(requested_phone_number, otp_code)
+
         # Here, you might send the OTP via SMS or other means
         return Response("OTP has been sent", status=status.HTTP_200_OK)
-
 
 
 @api_view(['POST'])
@@ -233,7 +246,7 @@ def VerifyOTP(request):
     requested_phone_number = request.data.get("phone_number")
     otp_entered = request.data.get("otp")
 
-    phone_number = get_object_or_404(VerifiedPhone,phone_number=requested_phone_number)
+    phone_number = get_object_or_404(VerifiedPhone, phone_number=requested_phone_number)
     print(phone_number)
     if phone_number:
         current_time = timezone.now()
