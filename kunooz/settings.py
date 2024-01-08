@@ -16,7 +16,6 @@ import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
 from django.utils.translation import gettext_lazy as _ # Here
-#
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,6 +27,12 @@ ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split("
 # DEBUG = os.getenv("DEBUG", "False") == "True"
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
+account_sid = os.getenv("account_sid", "ACf9399890c884480bbd928ce8e01793c2")
+auth_token = os.getenv("auth_token", "969097fa6701be032d6e855b1742d481")
+verify_sid = os.getenv("verify_sid", "VAdb823313b6b7f566f8c449f1ae36c067")
+verified_number = os.getenv("verified_number", "+971527228644")
+
+
 
 # DOMAIN = 'seashell-app-plyq6.ondigitalocean.app'
 DOMAIN = os.getenv("DOMAIN", "127.0.0.1:8000")
