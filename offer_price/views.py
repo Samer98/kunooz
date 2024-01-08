@@ -1,4 +1,7 @@
 from django.shortcuts import render
+
+# Create your views here.
+from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
@@ -7,10 +10,10 @@ from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from .models import Approval, ApprovalComment
+from .models import OfferPrice, OfferPriceComment
 from constructions.models import Project, ProjectMember
 from members.models import User
-from .serializers import ApprovalSerializers, ApprovalCommentSerializers
+from .serializers import OfferPriceSerializers, OfferPriceCommentSerializers
 from django.db.models import Q
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
@@ -21,9 +24,9 @@ from django.utils.dateparse import parse_date
 # Create your views here.
 
 
-class ApprovalViewSet(ModelViewSet):
-    queryset = Approval.objects.all()
-    serializer_class = ApprovalSerializers
+class OfferPriceViewSet(ModelViewSet):
+    queryset = OfferPrice.objects.all()
+    serializer_class = OfferPriceSerializers
     permission_classes = [IsConsultant]
 
     def get_permissions(self):
@@ -44,7 +47,7 @@ class ApprovalViewSet(ModelViewSet):
         if project.project_owner != owner:
             raise PermissionDenied("Not the owner of the project")
 
-        records = Approval.objects.filter(project_id=project_id)
+        records = OfferPrice.objects.filter(project_id=project_id)
 
         if name_filter:
             records = records.filter(title__icontains=name_filter)
@@ -63,9 +66,7 @@ class ApprovalViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         owner = self.request.user
         project_id = self.request.data.get('project')
-        print(project_id)
         project = get_object_or_404(Project, id=project_id)
-        print(project)
 
         if project.project_owner != owner:
             raise PermissionDenied("Not the owner of the project")
@@ -99,23 +100,23 @@ class ApprovalViewSet(ModelViewSet):
         record.delete()
 
 
-class ApprovalCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
-    queryset = ApprovalComment.objects.all()
-    serializer_class = ApprovalCommentSerializers
+class OfferPriceCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
+    queryset = OfferPriceComment.objects.all()
+    serializer_class = OfferPriceCommentSerializers
     permission_classes = [IsConsultant_Worker_Owner]
 
     def retrieve(self, request, *args, **kwargs):
         approval_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
-        approval = get_object_or_404(Approval, id=approval_id)
-        project_id = approval.project_id
+        offer_price = get_object_or_404(OfferPrice, id=approval_id)
+        project_id = offer_price.project_id
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
 
         if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
-        records = ApprovalComment.objects.filter(approval=approval_id)
+        records = OfferPriceComment.objects.filter(approval=approval_id)
 
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)

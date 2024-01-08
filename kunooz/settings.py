@@ -58,6 +58,9 @@ INSTALLED_APPS = [
     'additional_modification',
     'progress_step',
     'approval',
+    'report',
+    'note',
+    'offer_price',
 
 
 

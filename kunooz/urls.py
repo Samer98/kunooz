@@ -32,5 +32,8 @@ urlpatterns = [
     path('additional_modification/', include('additional_modification.urls')),
     path('progress_step/', include('progress_step.urls')),
     path('approval/', include('approval.urls')),
+    path('report/', include('report.urls')),
+    path('note/', include('note.urls')),
+    path('offer_price/', include('offer_price.urls')),
 
 ]

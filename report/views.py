@@ -7,10 +7,10 @@ from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from .models import Approval, ApprovalComment
+from .models import Report, ReportComment
 from constructions.models import Project, ProjectMember
 from members.models import User
-from .serializers import ApprovalSerializers, ApprovalCommentSerializers
+from .serializers import ReportSerializers, ReportCommentSerializers
 from django.db.models import Q
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
@@ -21,9 +21,9 @@ from django.utils.dateparse import parse_date
 # Create your views here.
 
 
-class ApprovalViewSet(ModelViewSet):
-    queryset = Approval.objects.all()
-    serializer_class = ApprovalSerializers
+class ReportViewSet(ModelViewSet):
+    queryset = Report.objects.all()
+    serializer_class = ReportSerializers
     permission_classes = [IsConsultant]
 
     def get_permissions(self):
@@ -44,7 +44,7 @@ class ApprovalViewSet(ModelViewSet):
         if project.project_owner != owner:
             raise PermissionDenied("Not the owner of the project")
 
-        records = Approval.objects.filter(project_id=project_id)
+        records = Report.objects.filter(project_id=project_id)
 
         if name_filter:
             records = records.filter(title__icontains=name_filter)
@@ -99,15 +99,15 @@ class ApprovalViewSet(ModelViewSet):
         record.delete()
 
 
-class ApprovalCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
-    queryset = ApprovalComment.objects.all()
-    serializer_class = ApprovalCommentSerializers
+class ReportCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
+    queryset = ReportComment.objects.all()
+    serializer_class = ReportCommentSerializers
     permission_classes = [IsConsultant_Worker_Owner]
 
     def retrieve(self, request, *args, **kwargs):
         approval_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
-        approval = get_object_or_404(Approval, id=approval_id)
+        approval = get_object_or_404(Report, id=approval_id)
         project_id = approval.project_id
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
@@ -115,7 +115,7 @@ class ApprovalCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSe
         if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
-        records = ApprovalComment.objects.filter(approval=approval_id)
+        records = ReportComment.objects.filter(approval=approval_id)
 
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)

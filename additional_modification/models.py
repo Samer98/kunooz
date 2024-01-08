@@ -18,7 +18,7 @@ class AdditionalModification(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
     file = models.FileField(upload_to='additional_modification_files', null=True, blank=True,
                             validators=[validate_file_size])
-    note = models.CharField(max_length=255)
+    note = models.TextField()
     date_created = models.DateField(auto_created=True, auto_now=True)
 
     def __str__(self):
@@ -28,7 +28,7 @@ class AdditionalModification(models.Model):
 class AdditionalModificationComment(models.Model):
     additional_modification = models.ForeignKey(AdditionalModification, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.CharField(max_length=255)
+    comment = models.TextField()
     file = models.FileField(upload_to='additional_modification_comment_files', null=True, blank=True,
                             validators=[validate_file_size])
 
