@@ -32,7 +32,7 @@ class OfferPrice(models.Model):
         return str(self.project) + " | " + str(self.title)
 
 
-class OfferPriceComment (models.Model):
+class OfferPriceComment(models.Model):
     offer_price = models.ForeignKey(OfferPrice, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()

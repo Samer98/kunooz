@@ -14,7 +14,7 @@ from .serializers import AdditionalModificationSerializers, AdditionalModificati
 from django.db.models import Q
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
-from kunooz.permissions import IsConsultant, IsWorker, IsOwner, IsConsultant_Worker_Owner
+from kunooz.permissions import IsConsultant, IsContractor, IsOwner, IsConsultant_Contractor_Owner
 from django.utils.dateparse import parse_date
 
 
@@ -29,7 +29,7 @@ class AdditionalModificationViewSet(ModelViewSet):
     def get_permissions(self):
 
         if self.request.method == "GET":
-            return [IsConsultant_Worker_Owner()]
+            return [IsConsultant_Contractor_Owner()]
         return [IsConsultant()]
 
     def retrieve(self, request, *args, **kwargs):
@@ -102,7 +102,7 @@ class AdditionalModificationViewSet(ModelViewSet):
 class AdditionalModificationCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
     queryset = AdditionalModificationComment.objects.all()
     serializer_class = AdditionalModificationCommentSerializers
-    permission_classes = [IsConsultant_Worker_Owner]
+    permission_classes = [IsConsultant_Contractor_Owner]
 
     # def get_permissions(self):
     #
