@@ -47,6 +47,7 @@ class ProfileViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['phone_number']
+
     def get_permissions(self):
 
         if self.request.method == "GET":
@@ -85,10 +86,7 @@ class ProfileViewSet(ModelViewSet):
         if not request.user.is_superuser:
             raise PermissionDenied("Permission denied. Only admin users can delete profiles.")
 
-            # return JsonResponse(response_data, status.HTTP_403_FORBIDDEN)
 
-            # return Response({'detail': 'Permission denied. Only admin users can delete profiles.'},
-            #                 status=status.HTTP_403_FORBIDDEN)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -172,6 +170,7 @@ def IsVerified(request):
 
 from kunooz.settings import account_sid, auth_token, verify_sid, verified_number
 from twilio.rest import Client
+
 print(account_sid)
 
 client = Client('ACf9399890c884480bbd928ce8e01793c2', 'fcc09b9e9390ee0737a032cd12969386')
@@ -179,12 +178,14 @@ client = Client('ACf9399890c884480bbd928ce8e01793c2', 'fcc09b9e9390ee0737a032cd1
 print(auth_token)
 print(verify_sid)
 
-def send_sms(mobile,OTP_Code):
+
+def send_sms(mobile, OTP_Code):
     message = client.messages.create(
         messaging_service_sid='MG72ae018b22ca44e1e0715768ca417e06',
-         body=f'OTP IS {OTP_Code}',
-         to=mobile)
+        body=f'OTP IS {OTP_Code}',
+        to=mobile)
     print(message.status)
+
 
 @api_view(['POST'])
 def PreRegister(request):
@@ -204,7 +205,7 @@ def PreRegister(request):
             phone_number.save()
 
             print(otp_code)
-            send_sms(requested_phone_number,otp_code)
+            send_sms(requested_phone_number, otp_code)
             # Here, you might send the OTP via SMS or other means
             return Response("OTP has been sent", status=status.HTTP_200_OK)
     else:

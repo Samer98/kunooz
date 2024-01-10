@@ -18,9 +18,6 @@ from kunooz.permissions import IsConsultant, IsContractor, IsOwner, IsConsultant
 from django.utils.dateparse import parse_date
 
 
-# Create your views here.
-
-
 class PricingTenderViewSet(ModelViewSet):
     queryset = PricingTender.objects.all()
     serializer_class = PricingTenderSerializers
