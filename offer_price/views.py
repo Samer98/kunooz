@@ -106,9 +106,9 @@ class OfferPriceCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericView
     permission_classes = [IsConsultant_Worker_Owner]
 
     def retrieve(self, request, *args, **kwargs):
-        approval_id = self.kwargs.get('pk')  # Get project_name from URL
+        offer_price_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
-        offer_price = get_object_or_404(OfferPrice, id=approval_id)
+        offer_price = get_object_or_404(OfferPrice, id=offer_price_id)
         project_id = offer_price.project_id
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
@@ -116,7 +116,7 @@ class OfferPriceCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericView
         if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
-        records = OfferPriceComment.objects.filter(approval=approval_id)
+        records = OfferPriceComment.objects.filter(offer_price=offer_price_id)
 
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)
@@ -134,3 +134,4 @@ class OfferPriceCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericView
         serializer.save(user=user)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+

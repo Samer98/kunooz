@@ -171,15 +171,19 @@ def IsVerified(request):
 
 from kunooz.settings import account_sid, auth_token, verify_sid, verified_number
 from twilio.rest import Client
+print(account_sid)
 
-client = Client(account_sid, auth_token)
+client = Client('ACf9399890c884480bbd928ce8e01793c2', 'fcc09b9e9390ee0737a032cd12969386')
 
+print(auth_token)
+print(verify_sid)
 
 def send_sms(mobile,OTP_Code):
-    message = client.messages.create(from_='+12548703291',
-                                     body=f'OTP IS {OTP_Code}',
-                                     to=mobile)
-
+    message = client.messages.create(
+        messaging_service_sid='MG72ae018b22ca44e1e0715768ca417e06',
+         body=f'OTP IS {OTP_Code}',
+         to=mobile)
+    print(message.status)
 
 @api_view(['POST'])
 def PreRegister(request):

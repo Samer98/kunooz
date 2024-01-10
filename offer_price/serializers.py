@@ -3,9 +3,10 @@ from .models import OfferPrice, OfferPriceComment
 
 class OfferPriceSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
+
     class Meta:
         model = OfferPrice
-        fields = ['id','project','worker_name','note','file','date_created']
+        fields = ['id', 'project', 'title', 'project_duration', 'bid_price', 'note', 'file', 'date_created']
 
 
 class OfferPriceCommentSerializers(serializers.ModelSerializer):
