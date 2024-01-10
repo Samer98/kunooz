@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PricingTender,PricingTenderContractor
+from .models import PricingTender,PricingTenderContractor,PricingTinderComment
 
 class PricingTenderContractorSerializers(serializers.ModelSerializer):
     contractor_name = serializers.SerializerMethodField()
@@ -19,3 +19,18 @@ class PricingTenderSerializers(serializers.ModelSerializer):
         fields = ['id','project','project_name','planing','three_d',
                   'quantities_and_specifications','other_files''members']
 
+class PricingTinderCommentSerializers(serializers.ModelSerializer):
+    date_created = serializers.DateField(read_only=True)
+    user = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = PricingTinderComment
+        fields = ['id','user','pricing_tender','file','comment','date_created']
+
+    def get_user(self, obj):
+        if obj.user:
+            return {
+                'id': obj.user.id,
+                'first_name': obj.user.first_name,
+                'phone_number': str(obj.user.phone_number)
+            }
+        return None

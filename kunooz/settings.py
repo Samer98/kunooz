@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'report',
     'note',
     'offer_price',
+    'pricing_tender',
 
 
 

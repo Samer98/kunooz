@@ -45,7 +45,8 @@ class ProfileViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
-
+    filter_backends = [SearchFilter]
+    search_fields = ['phone_number']
     def get_permissions(self):
 
         if self.request.method == "GET":

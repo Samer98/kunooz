@@ -33,3 +33,16 @@ class PricingTenderContractor(models.Model):
 
     def __str__(self):
         return str(self.project) +" | "+ str(self.contractor.first_name)
+
+
+class PricingTinderComment(models.Model):
+    pricing_tender = models.ForeignKey(PricingTender , on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField()
+    file = models.FileField(upload_to='offer_price_comment_files', null=True, blank=True,
+                            validators=[validate_file_size])
+
+    date_created = models.DateField(auto_created=True, auto_now=True)
+
+    def __str__(self):
+        return str(self.pricing_tender) + " | " + str(self.comment)
