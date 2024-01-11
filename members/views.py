@@ -45,6 +45,8 @@ class ProfileViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [SearchFilter]
+    search_fields = ['phone_number']
 
     def get_permissions(self):
 
@@ -84,10 +86,7 @@ class ProfileViewSet(ModelViewSet):
         if not request.user.is_superuser:
             raise PermissionDenied("Permission denied. Only admin users can delete profiles.")
 
-            # return JsonResponse(response_data, status.HTTP_403_FORBIDDEN)
 
-            # return Response({'detail': 'Permission denied. Only admin users can delete profiles.'},
-            #                 status=status.HTTP_403_FORBIDDEN)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -160,9 +159,7 @@ def UserResetPassword(request, uid, token):
 @api_view(['POST'])
 def IsVerified(request):
     requested_phone_number = request.data.get("phone_number")
-    print(requested_phone_number)
     phone_in_table = get_object_or_404(VerifiedPhone, phone_number=requested_phone_number)
-    print(phone_in_table)
     if phone_in_table.is_verified:
         return Response("This phone number is verified", status=status.HTTP_200_OK)
     else:
@@ -172,13 +169,20 @@ def IsVerified(request):
 from kunooz.settings import account_sid, auth_token, verify_sid, verified_number
 from twilio.rest import Client
 
+
 client = Client(account_sid, auth_token)
 
 
-def send_sms(mobile,OTP_Code):
-    message = client.messages.create(from_='+12548703291',
-                                     body=f'OTP IS {OTP_Code}',
-                                     to=mobile)
+
+def send_sms(mobile, OTP_Code):
+    # print(account_sid)
+    # print(auth_token)
+    # print(client.auth,client.account_sid)
+    message = client.messages.create(
+        messaging_service_sid='MG72ae018b22ca44e1e0715768ca417e06',
+        body=f'OTP IS {OTP_Code}',
+        to=mobile)
+    print(message.status)
 
 
 @api_view(['POST'])
@@ -199,7 +203,7 @@ def PreRegister(request):
             phone_number.save()
 
             print(otp_code)
-            send_sms(requested_phone_number,otp_code)
+            send_sms(requested_phone_number, otp_code)
             # Here, you might send the OTP via SMS or other means
             return Response("OTP has been sent", status=status.HTTP_200_OK)
     else:

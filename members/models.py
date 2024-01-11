@@ -19,7 +19,7 @@ class Role(models.Model):
     ROLE_CHOICES= [
         ('Consultant', "Consultant"),
         ("User", "User"),
-        ("Worker", "Worker"),
+        ("Contractor", "Contractor"),
         ("Owner", "Owner"),
 
     ]

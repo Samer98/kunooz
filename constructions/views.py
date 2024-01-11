@@ -47,38 +47,33 @@ class ProjectViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin,List
         serializer.is_valid(raise_exception=True)
         project =serializer.save(project_owner=user)
 
-        users_data = request.data.get('users')
-        cleaned_string = users_data.strip('[]')
-        phone_list = cleaned_string.split(',')
+        users_ids = request.data.get('users',[])
+        for member in users_ids:
+            try:
+                user_to_add = User.objects.get(id=member)
 
-        if phone_list:
-            # Create ProjectMember instances for each user in the list
-            for user_number in phone_list:
-                try:
-                    user_to_add = User.objects.get(phone_number=user_number)
+                # Check if the user is not the same as the requester
+                if user_to_add == user:
+                    print('Cannot add yourself to the project')
+                    continue
 
-                    # Check if the user is not the same as the requester
-                    if user_to_add == user:
-                        print('Cannot add yourself to the project')
-                        continue
+                # Check if the user exists and is not a consultant
+                if user_to_add.role == 'consultant':
+                    print('Cant add  a consultant')
+                    continue
 
-                    # Check if the user exists and is not a consultant
-                    if user_to_add.role == 'consultant':
-                        print('Cant add  a consultant')
-                        continue
+                # Check if the user is already a member of the project
+                if ProjectMember.objects.filter(project=project, member=user_to_add).exists():
+                    print('User is already a member of the project')
+                    continue
 
-                    # Check if the user is already a member of the project
-                    if ProjectMember.objects.filter(project=project, member=user_to_add).exists():
-                        print('User is already a member of the project')
-                        continue
+                # Create ProjectMember only if the user exists, is a consultant, and not already a member
+                ProjectMember.objects.create(project=project, member=user_to_add)
+                print('User added')
 
-                    # Create ProjectMember only if the user exists, is a consultant, and not already a member
-                    ProjectMember.objects.create(project=project, member=user_to_add)
-                    print('User added')
-
-                except User.DoesNotExist:
-                    print('User does not exist')
-                    pass
+            except User.DoesNotExist:
+                print('User does not exist')
+                pass
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -88,6 +83,35 @@ class ProjectViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin,List
 
         if project.project_owner != user:
             return Response(_("You are not the owner of this project"), status=status.HTTP_403_FORBIDDEN)
+
+        users_ids = request.data.get('users', [])
+        for member in users_ids:
+            try:
+                user_to_add = User.objects.get(id=member)
+
+                # Check if the user is not the same as the requester
+                if user_to_add == user:
+                    print('Cannot add yourself to the project')
+                    continue
+
+                # Check if the user exists and is not a consultant
+                if user_to_add.role == 'consultant':
+                    print('Cant add  a consultant')
+                    continue
+
+                # Check if the user is already a member of the project
+                if ProjectMember.objects.filter(project=project, member=user_to_add).exists():
+                    print('User is already a member of the project')
+                    continue
+
+                # Create ProjectMember only if the user exists, is a consultant, and not already a member
+                ProjectMember.objects.create(project=project, member=user_to_add)
+                print('User added')
+
+            except User.DoesNotExist:
+                print('User does not exist')
+                pass
+
 
         serializer = self.get_serializer(project, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -168,7 +192,7 @@ class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMix
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, *args, **kwargs):
-        phone_number = self.request.data.get('phone_number')
+        user_id = self.request.data.get('user_id')
         project_id = self.request.data.get('project')
 
         # Fetch the project
@@ -180,7 +204,7 @@ class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMix
 
         # Retrieve the user based on the phone number
         try:
-            user = User.objects.get(phone_number=phone_number)
+            user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             return Response("User does not exist", status=status.HTTP_400_BAD_REQUEST)
 

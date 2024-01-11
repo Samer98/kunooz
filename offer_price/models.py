@@ -1,3 +1,7 @@
+
+
+
+################
 from django.core.validators import MinValueValidator
 from django.db import models
 from constructions.models import Project
@@ -16,21 +20,23 @@ def validate_file_size(value):
 
 class OfferPrice(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    worker_name = models.CharField(max_length=255, null=False, blank=False)
-    file = models.FileField(upload_to='offer_price_files', null=True, blank=True,
+    title = models.CharField(max_length=255, null=False, blank=False)
+    project_duration = models.CharField(max_length=255, null=True, blank=True)
+    bid_price = models.IntegerField(validators=[MinValueValidator(0)])
+    file = models.FileField(upload_to='report_files', null=True, blank=True,
                             validators=[validate_file_size])
     note = models.TextField()
     date_created = models.DateField(auto_created=True, auto_now=True)
 
     def __str__(self):
-        return str(self.project) + " | " + str(self.worker_name)
+        return str(self.project) + " | " + str(self.title)
 
 
 class OfferPriceComment(models.Model):
     offer_price = models.ForeignKey(OfferPrice, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
-    file = models.FileField(upload_to='offer_price_comment_files', null=True, blank=True,
+    file = models.FileField(upload_to='report_comment_files', null=True, blank=True,
                             validators=[validate_file_size])
 
     date_created = models.DateField(auto_created=True, auto_now=True)

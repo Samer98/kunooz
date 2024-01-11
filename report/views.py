@@ -14,7 +14,7 @@ from .serializers import ReportSerializers, ReportCommentSerializers
 from django.db.models import Q
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
-from kunooz.permissions import IsConsultant, IsWorker, IsOwner, IsConsultant_Worker_Owner
+from kunooz.permissions import IsConsultant, IsContractor, IsOwner, IsConsultant_Contractor_Owner
 from django.utils.dateparse import parse_date
 
 
@@ -29,7 +29,7 @@ class ReportViewSet(ModelViewSet):
     def get_permissions(self):
 
         if self.request.method == "GET":
-            return [IsConsultant_Worker_Owner()]
+            return [IsConsultant_Contractor_Owner()]
         return [IsConsultant()]
 
     def retrieve(self, request, *args, **kwargs):
@@ -37,7 +37,7 @@ class ReportViewSet(ModelViewSet):
         owner = self.request.user
         project = get_object_or_404(Project, id=project_id)
 
-        name_filter = self.request.query_params.get('title')
+        name_filter = self.request.query_params.get('worker_name')
         start_date_filter = self.request.query_params.get('start_date')
         end_date_filter = self.request.query_params.get('end_date')
 
@@ -47,7 +47,7 @@ class ReportViewSet(ModelViewSet):
         records = Report.objects.filter(project_id=project_id)
 
         if name_filter:
-            records = records.filter(title__icontains=name_filter)
+            records = records.filter(worker_name__icontains=name_filter)
 
         if start_date_filter and end_date_filter:
             try:
@@ -102,20 +102,20 @@ class ReportViewSet(ModelViewSet):
 class ReportCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
     queryset = ReportComment.objects.all()
     serializer_class = ReportCommentSerializers
-    permission_classes = [IsConsultant_Worker_Owner]
+    permission_classes = [IsConsultant_Contractor_Owner]
 
     def retrieve(self, request, *args, **kwargs):
-        approval_id = self.kwargs.get('pk')  # Get project_name from URL
+        report_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
-        approval = get_object_or_404(Report, id=approval_id)
-        project_id = approval.project_id
+        report = get_object_or_404(Report, id=report_id)
+        project_id = report.project_id
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
 
         if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
-        records = ReportComment.objects.filter(approval=approval_id)
+        records = ReportComment.objects.filter(report=report_id)
 
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)

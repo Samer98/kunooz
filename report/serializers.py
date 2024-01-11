@@ -6,8 +6,7 @@ class ReportSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
     class Meta:
         model = Report
-        fields = ['id','project','title','project_duration','bid_price','note','file','date_created']
-
+        fields = ['id','project','worker_name','note','file','date_created']
 
 class ReportCommentSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)

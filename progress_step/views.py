@@ -15,7 +15,7 @@ from .serializers import ProgressStepSerializers, ProgressStepCommentSerializers
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
-from kunooz.permissions import IsConsultant, IsWorker, IsOwner, IsConsultant_Worker_Owner
+from kunooz.permissions import IsConsultant, IsContractor, IsOwner, IsConsultant_Contractor_Owner
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Max
 from django.db import transaction
@@ -33,7 +33,7 @@ class ProgressStepViewSet(ModelViewSet):
     def get_permissions(self):
 
         if self.request.method == "GET":
-            return [IsConsultant_Worker_Owner()]
+            return [IsConsultant_Contractor_Owner()]
         return [IsConsultant()]
 
     def list(self, request, *args, **kwargs):
@@ -188,7 +188,7 @@ class ProgressStepViewSet(ModelViewSet):
 class ProgressStepCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
     queryset = ProgressStepComment.objects.all()
     serializer_class = ProgressStepCommentSerializers
-    permission_classes = [IsConsultant_Worker_Owner]
+    permission_classes = [IsConsultant_Contractor_Owner]
 
     def retrieve(self, request, *args, **kwargs):
         print("Hello")
