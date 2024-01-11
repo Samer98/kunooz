@@ -159,9 +159,7 @@ def UserResetPassword(request, uid, token):
 @api_view(['POST'])
 def IsVerified(request):
     requested_phone_number = request.data.get("phone_number")
-    print(requested_phone_number)
     phone_in_table = get_object_or_404(VerifiedPhone, phone_number=requested_phone_number)
-    print(phone_in_table)
     if phone_in_table.is_verified:
         return Response("This phone number is verified", status=status.HTTP_200_OK)
     else:
@@ -171,15 +169,15 @@ def IsVerified(request):
 from kunooz.settings import account_sid, auth_token, verify_sid, verified_number
 from twilio.rest import Client
 
-print(account_sid)
 
-client = Client('ACf9399890c884480bbd928ce8e01793c2', 'fcc09b9e9390ee0737a032cd12969386')
+client = Client(account_sid, auth_token)
 
-print(auth_token)
-print(verify_sid)
 
 
 def send_sms(mobile, OTP_Code):
+    # print(account_sid)
+    # print(auth_token)
+    # print(client.auth,client.account_sid)
     message = client.messages.create(
         messaging_service_sid='MG72ae018b22ca44e1e0715768ca417e06',
         body=f'OTP IS {OTP_Code}',

@@ -27,10 +27,10 @@ ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split("
 # DEBUG = os.getenv("DEBUG", "False") == "True"
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-account_sid = os.getenv("account_sid", "ACf9399890c884480bbd928ce8e01793c2")
-auth_token = os.getenv("auth_token", "fcc09b9e9390ee0737a032cd12969386")
-verify_sid = os.getenv("verify_sid", "VAdb823313b6b7f566f8c449f1ae36c067")
-verified_number = os.getenv("verified_number", "+971527228644")
+account_sid = os.getenv("account_sid")
+auth_token = os.getenv("auth_token")
+verify_sid = os.getenv("verify_sid")
+verified_number = os.getenv("verified_number")
 
 
 
