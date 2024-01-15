@@ -17,9 +17,7 @@ urlpatterns = [
     path('SendOTP/', views.SendOTP),
     path('IsVerified/', views.IsVerified),
     path('PreRegister/', views.PreRegister),
-
-    path('activate/<str:uid>/<str:token>', views.UserActivationView.as_view()),
-    path('reset_password/<str:uid>/<str:token>', views.UserResetPassword),
+    path('password_reset_phone/', views.password_reset_phone, name='password_reset_phone'),
     path('logout/', views.logout, name='logout'),
 
               ]+ router.urls
