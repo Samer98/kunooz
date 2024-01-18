@@ -12,7 +12,7 @@ def validate_file_size(value):
         raise ValidationError('File size cannot exceed 10MB.')
 
 class PricingTender(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    # project = models.ForeignKey(Project, on_delete=models.CASCADE)
     project_name = models.CharField(max_length=255,null=False,blank=False)
     planing = models.FileField(upload_to='PricingTender_files/planing', null=True, blank=True,
                             validators=[validate_file_size])
@@ -25,24 +25,42 @@ class PricingTender(models.Model):
 
 
     def __str__(self):
-        return str(self.project_name) + " | " + str(self.project)
+        return str(self.project_name)
 
 class PricingTenderContractor(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    pricing_tender = models.ForeignKey(PricingTender, on_delete=models.CASCADE)
     contractor = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.project) +" | "+ str(self.contractor.first_name)
+        return str(self.pricing_tender) +" | "+ str(self.contractor.first_name)
 
 
-class PricingTinderComment(models.Model):
-    pricing_tender = models.ForeignKey(PricingTender , on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.TextField()
-    file = models.FileField(upload_to='offer_price_comment_files', null=True, blank=True,
+
+
+class OfferPrice(models.Model):
+    PricingTender = models.ForeignKey(PricingTender, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, null=False, blank=False)
+    project_duration = models.CharField(max_length=255, null=True, blank=True)
+    bid_price = models.IntegerField(validators=[MinValueValidator(0)])
+    file = models.FileField(upload_to='report_files', null=True, blank=True,
                             validators=[validate_file_size])
-
+    note = models.TextField()
     date_created = models.DateField(auto_created=True, auto_now=True)
 
     def __str__(self):
-        return str(self.pricing_tender) + " | " + str(self.comment)
+        return str(self.PricingTender) + " | " + str(self.title)
+
+
+# class PricingTinderComment(models.Model):
+#     pricing_tender = models.ForeignKey(PricingTender , on_delete=models.CASCADE)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     comment = models.TextField()
+#     file = models.FileField(upload_to='offer_price_comment_files', null=True, blank=True,
+#                             validators=[validate_file_size])
+#
+#     date_created = models.DateField(auto_created=True, auto_now=True)
+#
+#     def __str__(self):
+#         return str(self.pricing_tender) + " | " + str(self.comment)
+
+

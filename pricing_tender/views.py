@@ -7,10 +7,10 @@ from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from .models import PricingTender, PricingTenderContractor, PricingTinderComment
+from .models import PricingTender, PricingTenderContractor #, PricingTinderComment
 from constructions.models import Project, ProjectMember
 from members.models import User
-from .serializers import PricingTenderSerializers, PricingTenderContractorSerializers,PricingTinderCommentSerializers
+from .serializers import PricingTenderSerializers, PricingTenderContractorSerializers #,PricingTinderCommentSerializers
 from django.db.models import Q
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
@@ -59,17 +59,18 @@ class PricingTenderViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = self.request.user
-        project_id = self.request.data.get('project')
-        project = get_object_or_404(Project, id=project_id)
+        # project_id = self.request.data.get('project')
+        # project = get_object_or_404(Project, id=project_id)
 
-        if project.project_owner != user:
-            raise PermissionDenied("Not the owner of the project")
+        # if project.project_owner != user:
+        #     raise PermissionDenied("Not the owner of the project")
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        instance = serializer.save()
 
         users_ids = request.data.get('users', [])
+        not_valid_ids = []
         for member in users_ids:
             try:
                 user_to_add = User.objects.get(id=member)
@@ -77,24 +78,31 @@ class PricingTenderViewSet(ModelViewSet):
                 # Check if the user is not the same as the requester
                 if user_to_add == user:
                     print('Cannot add yourself to the project')
+                    not_valid_ids.append((user_to_add, 'Cannot add yourself to the project'))
+
                     continue
 
                 # Check if the user exists and is not a consultant
-                if user_to_add.role == 'consultant':
-                    print('Cant add  a consultant')
+                if user_to_add.role != 'Contractor':
+                    print('user mot Contractor')
+                    not_valid_ids.append((user_to_add, 'user need to be Contractor'))
+
                     continue
 
                 # Check if the user is already a member of the project
-                if PricingTenderContractorSerializers.objects.filter(project=project, member=user_to_add).exists():
+                if PricingTenderContractorSerializers.objects.filter(pricing_tender=instance, member=user_to_add).exists():
+                    not_valid_ids.append((user_to_add,'User is already a member of the project'))
                     print('User is already a member of the project')
                     continue
 
                 # Create ProjectMember only if the user exists, is a consultant, and not already a member
-                PricingTenderContractorSerializers.objects.create(project=project, member=user_to_add)
+                PricingTenderContractorSerializers.objects.create(pricing_tender=instance, member=user_to_add)
                 print('User added')
 
             except User.DoesNotExist:
                 print('User does not exist')
+                # not_valid_ids.append((user_to_add,'User does not exist'))
+
                 pass
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -122,37 +130,37 @@ class PricingTenderViewSet(ModelViewSet):
         record.delete()
 
 
-class PricingTinderCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
-    queryset = PricingTinderComment.objects.all()
-    serializer_class = PricingTinderCommentSerializers
-    permission_classes = [IsConsultant_Contractor_Owner]
-
-    def retrieve(self, request, *args, **kwargs):
-        report_id = self.kwargs.get('pk')  # Get project_name from URL
-        user = self.request.user
-        pricing_tender = get_object_or_404(PricingTender, id=report_id)
-        project_id = pricing_tender.project_id
-        project = get_object_or_404(Project, id=project_id)
-        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
-
-        if not project_member and project.project_owner != user:
-            return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
-
-        records = PricingTinderComment.objects.filter(report=report_id)
-
-        serializer = self.get_serializer(records, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        user = self.request.user
-        project_id = self.request.data.get('project')
-        project = get_object_or_404(Project, id=project_id)
-        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
-        if not project_member and project.project_owner != user:
-            return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=user)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+# class PricingTinderCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
+#     queryset = PricingTinderComment.objects.all()
+#     serializer_class = PricingTinderCommentSerializers
+#     permission_classes = [IsConsultant_Contractor_Owner]
+#
+#     def retrieve(self, request, *args, **kwargs):
+#         report_id = self.kwargs.get('pk')  # Get project_name from URL
+#         user = self.request.user
+#         pricing_tender = get_object_or_404(PricingTender, id=report_id)
+#         project_id = pricing_tender.project_id
+#         project = get_object_or_404(Project, id=project_id)
+#         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
+#
+#         if not project_member and project.project_owner != user:
+#             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
+#
+#         records = PricingTinderComment.objects.filter(report=report_id)
+#
+#         serializer = self.get_serializer(records, many=True)
+#         return Response(serializer.data)
+#
+#     def create(self, request, *args, **kwargs):
+#         user = self.request.user
+#         project_id = self.request.data.get('project')
+#         project = get_object_or_404(Project, id=project_id)
+#         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
+#         if not project_member and project.project_owner != user:
+#             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
+#
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save(user=user)
+#
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -13,16 +13,16 @@ Arabic_progress_step={
 }
 
 English_progress_step={
-    "Step 1": ["sub 1","sub 2","sub 3","sub 4","sub 5"],
-    "Step 2": ["sub 1", "sub 2", "sub 3", "sub 4", "sub 5"],
-    "Step 3": ["sub 1", "sub 2", "sub 3", "sub 4", "sub 5"],
-    "Step 4": ["sub 1", "sub 2", "sub 3", "sub 4", "sub 5"],
-    "Step 5": ["sub 1", "sub 2", "sub 3", "sub 4", "sub 5"],
-    "Step 6": ["sub 1", "sub 2", "sub 3", "sub 4", "sub 5"],
-    "Step 7": ["sub 1", "sub 2", "sub 3", "sub 4", "sub 5"],
-    "Step 8": ["sub 1", "sub 2", "sub 3", "sub 4", "sub 5"],
-    "Step 9": ["sub 1", "sub 2", "sub 3", "sub 4", "sub 5"],
-    "Step 10": ["sub 1", "sub 2", "sub 3", "sub 4", "sub 5"],
+    "Step 1- Architectural Design": ["Assignment of consultant","Initial design (2D)","Initial design (3D)","Design approval","Soil testing procedures","Consultant contract"],
+    "Step 2- Structural Design": ["Completion of soil examination", "Making construction drawings and calculations"],
+    "Step 3 - MEP Plans": ["Air conditioning", "electricity", "sewers", "Water", "Brushes", "Roof"],
+    "Step 4 - Approval of Plans from Municipality": ["Approval of the architectural plan", "Approval of the construction plan", "Approval of the initial electricity plan"],
+    "Step 5 - Tenders": ["Table of materials and specifications", "Quantities table"],
+    "Step 6 - Price Analysis": ["Create a complete folder for the project with prices", "Sending the project to contractors and collecting quotes"],
+    "Step 7 - Publishing Villa to Tender": ["Analysis of offered prices", "Discuss with owner, (prices and budget)", "Choosing the right contractor for the owner"],
+    "Step 8 - Choosing the Contractor": ["Signing contracts upon discussion with owner", "Receiving the corners of the earth", "Obtaining the building permit"],
+    "Step 9 - Preparing Bank Files with Approvals": ["Consultant approval", "Contractor approval", "Issuing the award letter", "Issuing completion process", "Review the site ratios and prepare to provide a down payment to the contractor",'Monthly payments'],
+    "Step 10 - Site Supervision": ["Latest news page", "Reports", "Notes", "Material approval", "Completion rate", "Site modifications", "Site visits"],
 
 }
 
