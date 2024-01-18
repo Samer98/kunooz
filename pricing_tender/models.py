@@ -12,7 +12,7 @@ def validate_file_size(value):
         raise ValidationError('File size cannot exceed 10MB.')
 
 class PricingTender(models.Model):
-    # project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    pricing_tender_owner = models.ForeignKey(User, on_delete=models.CASCADE)
     project_name = models.CharField(max_length=255,null=False,blank=False)
     planing = models.FileField(upload_to='PricingTender_files/planing', null=True, blank=True,
                             validators=[validate_file_size])
@@ -22,6 +22,7 @@ class PricingTender(models.Model):
                             validators=[validate_file_size])
     other_files = models.FileField(upload_to='PricingTender_files/other_files', null=True, blank=True,
                             validators=[validate_file_size])
+    date_created = models.DateField(auto_created=True, auto_now=True)
 
 
     def __str__(self):
@@ -29,7 +30,7 @@ class PricingTender(models.Model):
 
 class PricingTenderContractor(models.Model):
     pricing_tender = models.ForeignKey(PricingTender, on_delete=models.CASCADE)
-    contractor = models.ForeignKey(User, on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.pricing_tender) +" | "+ str(self.contractor.first_name)
