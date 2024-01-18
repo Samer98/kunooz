@@ -39,7 +39,8 @@ class PricingTenderContractor(models.Model):
 
 
 class OfferPrice(models.Model):
-    PricingTender = models.ForeignKey(PricingTender, on_delete=models.CASCADE)
+    pricing_tender = models.ForeignKey(PricingTender, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255, null=False, blank=False)
     project_duration = models.CharField(max_length=255, null=True, blank=True)
     bid_price = models.IntegerField(validators=[MinValueValidator(0)])

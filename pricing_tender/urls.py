@@ -5,6 +5,8 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register('PricingTender', views.PricingTenderViewSet,basename="PricingTender")
+router.register('OfferPrice', views.OfferPriceViewSet,basename="OfferPrice")
+
 # router.register('PricingTenderComment', views.PricingTinderCommentViewSet,basename="PricingTenderComment")
 
 urlpatterns = [

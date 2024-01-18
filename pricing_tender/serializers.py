@@ -38,7 +38,8 @@ class PricingTenderSerializers(serializers.ModelSerializer):
 
 class OfferPriceSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
+    owner = serializers.CharField(read_only=True)
 
     class Meta:
         model = OfferPrice
-        fields = ['id', 'project', 'title', 'project_duration', 'bid_price', 'note', 'file', 'date_created']
+        fields = ['id', 'pricing_tender','owner', 'title', 'project_duration', 'bid_price', 'note', 'file', 'date_created']
