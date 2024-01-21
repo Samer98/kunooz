@@ -5,9 +5,18 @@ from .models import ProgressStep, ProgressStepComment
 
 class ProgressStepSerializers(serializers.ModelSerializer):
     order = serializers.IntegerField(read_only=True)
+    sub_steps = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = ProgressStep
-        fields = ['id','title','project',"parent","order","is_finished"]
+        fields = ['id','title','project',"parent","order","is_finished",'sub_steps']
+
+    def get_sub_steps(self, obj):
+        sub_steps = ProgressStep.objects.filter(parent=obj)
+        if sub_steps.exists():
+            serializer = ProgressStepSerializers(sub_steps, many=True)
+            return serializer.data
+        return None
+
 
 
 class ProgressStepCommentSerializers(serializers.ModelSerializer):
