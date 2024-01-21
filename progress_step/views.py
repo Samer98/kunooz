@@ -20,6 +20,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Max
 from django.db import transaction
 from typing import List, Tuple
+from .default_step import Arabic_progress_step, English_progress_step
 
 
 # Create your views here.
@@ -78,8 +79,8 @@ class ProgressStepViewSet(ModelViewSet):
             order = last_order + 1 if last_order is not None else 0
         else:
             last_order = \
-            ProgressStep.objects.filter(project_id=project_id, parent__isnull=True).aggregate(Max('order'))[
-                'order__max']
+                ProgressStep.objects.filter(project_id=project_id, parent__isnull=True).aggregate(Max('order'))[
+                    'order__max']
             order = last_order + 1 if last_order is not None else 0
 
         if project.project_owner != user:
@@ -183,6 +184,47 @@ class ProgressStepViewSet(ModelViewSet):
 
         return Response({"message": f"Project{project_id}, ProgressStep order updated successfully",
                          "new_order": ids}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'])
+    def create_standard_steps(self, request):
+        project_id = request.data.get("project_id")
+        language = request.data.get("language")
+        project = get_object_or_404(Project, id=project_id)
+        user = request.user
+
+        # Ensure the user is the owner of the project
+        if project.project_owner != user:
+            raise PermissionDenied("Not the owner of the project")
+
+        existing_steps = ProgressStep.objects.filter(project_id=project_id, parent=None)
+        if existing_steps.exists():
+            raise PermissionDenied("Cant create these steps cause steps already found")
+        # Create a dictionary mapping ID to the corresponding instance
+        predefined_steps = Arabic_progress_step if language == "AR" else English_progress_step
+        with transaction.atomic():
+            for main_step, sub_steps in predefined_steps.items():
+                order = sub_steps.index(sub_steps[0])  # Use the order of the first sub-step
+
+                # Create main step
+                main_step_creation = ProgressStep.objects.create(
+                    project=project,
+                    title=main_step,
+                    user=user,
+                    order=order
+                )
+
+                for sub_step_title in sub_steps:
+                    # Create sub-steps
+                    sub_step_creation = ProgressStep.objects.create(
+                        project=project,
+                        title=sub_step_title,
+                        parent=main_step_creation,
+                        user=user,
+                        order=order
+                    )
+
+        return Response({"message": f"Standard steps created successfully for Project {project_id}"},
+                        status=status.HTTP_200_OK)
 
 
 class ProgressStepCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
