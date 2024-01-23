@@ -193,7 +193,7 @@ class ProjectMembersViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMix
 
     def delete(self, request, *args, **kwargs):
         user_id = self.request.data.get('user_id')
-        project_id = self.request.data.get('project')
+        project_id = self.request.data.get('project_id')
 
         # Fetch the project
         project = get_object_or_404(Project, id=project_id)
