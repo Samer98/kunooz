@@ -219,7 +219,14 @@ SIMPLE_JWT = {
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)
 
 LANGUAGE_CODE = 'en-us'
 
