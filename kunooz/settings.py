@@ -232,7 +232,8 @@ USE_TZ = True
 LANGUAGES = [
     ('ar', _('Arabic')),
     ('en', _('English')),
-]# Locales available path
+]
+# Locales available path
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale/')
