@@ -17,9 +17,13 @@ class ReportCommentSerializers(serializers.ModelSerializer):
 
     def get_user(self, obj):
         if obj.user:
-            return {
+            user_data = {
                 'id': obj.user.id,
                 'first_name': obj.user.first_name,
+                'last_name': obj.user.last_name,
+                'profile_picture': obj.user.profile_picture.url if obj.user.profile_picture else None,
+                'role': str(obj.user.role),
                 'phone_number': str(obj.user.phone_number)
             }
+            return user_data
         return None
