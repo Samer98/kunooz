@@ -65,9 +65,8 @@ INSTALLED_APPS = [
     'approval',
     'report',
     'note',
-    # 'offer_price',
+    'notifcations',
     'pricing_tender',
-
 
 
     'multiselectfield',
