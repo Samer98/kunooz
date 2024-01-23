@@ -218,7 +218,7 @@ SIMPLE_JWT = {
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 LANGUAGE_CODE = 'en-us'
 
