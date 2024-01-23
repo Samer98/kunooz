@@ -219,6 +219,7 @@ SIMPLE_JWT = {
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = ['*']
 
 LANGUAGE_CODE = 'en-us'
 
@@ -232,7 +233,8 @@ USE_TZ = True
 LANGUAGES = [
     ('ar', _('Arabic')),
     ('en', _('English')),
-]# Locales available path
+]
+# Locales available path
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale/')

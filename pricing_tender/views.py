@@ -266,10 +266,12 @@ class OfferPriceViewSet(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         pricing_tender_id = self.kwargs.get('pk')  # Get PricingTender ID from URL
         owner = self.request.user
+        pricing_tender = get_object_or_404(PricingTender, id=pricing_tender_id)
+
         offer_price = get_object_or_404(OfferPrice, id=pricing_tender_id)
 
-        if offer_price.owner != owner:
-            raise PermissionDenied("Not the owner of the offer price")
+        if offer_price.owner != owner or pricing_tender.pricing_tender_owner != owner:
+            raise PermissionDenied("Not the owner of the offer price nor the owner of price tender")
         serializer = self.get_serializer(offer_price)
 
         return Response(serializer.data)
