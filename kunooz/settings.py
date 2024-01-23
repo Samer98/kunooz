@@ -218,8 +218,11 @@ SIMPLE_JWT = {
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Example: Your local development frontend server
+    "http://127.0.0.1:5173",
+    # Add other allowed origins as needed
+]
 
 LANGUAGE_CODE = 'en-us'
 
