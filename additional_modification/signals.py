@@ -10,7 +10,8 @@ from .models import AdditionalModificationComment
 def new_report_comment_created(sender, instance, created, **kwargs):
     if created:
         # Customize the message based on your needs
-        message = {"message":f"New comment created at project {instance.additional_modification.project}","project_id":instance.additional_modification.project.id}
+        message = {"message":f"New comment created at project {instance.additional_modification.project}"}
         type = "comment"
         # Create a notification for the user who joined the project
-        Notification.objects.create(user=instance.user, message=message,type=type)
+        Notification.objects.create(user=instance.user, message=message,type=type,extra_data = {"project_id":instance.additional_modification.project.id})
+        # Notification.set_extra_data({"project_id":instance.additional_modification.project.id, "user_id": new_member.id})
