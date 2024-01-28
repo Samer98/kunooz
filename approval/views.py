@@ -25,7 +25,8 @@ class ApprovalViewSet(ModelViewSet):
     queryset = Approval.objects.all()
     serializer_class = ApprovalSerializers
     permission_classes = [IsConsultant]
-
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    search_fields = ['title', 'project', 'date_created']
     def get_permissions(self):
 
         if self.request.method == "GET":
