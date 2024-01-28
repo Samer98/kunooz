@@ -14,27 +14,35 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from django.utils.translation import gettext as _
 from kunooz.permissions import IsConsultant
-import ast
-
+from django.db.models import Q
 # Create your views here.
 
 
-class ProjectViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin,ListModelMixin, GenericViewSet):
+class ProjectViewSet(ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializers
     permission_classes = [IsConsultant]
-    filter_backends = [SearchFilter]
-    search_fields = ['title','start_date','start_date']
+    filter_backends = [SearchFilter,DjangoFilterBackend]
+    search_fields = ['title','start_date','end_date']
 
     def list(self, request, *args, **kwargs):
         user = self.request.user
         projects = Project.objects.filter(project_owner=user)
+        search_query = self.request.query_params.get('search', None)
+        if search_query:
+            projects = projects.filter(
+                Q(title__icontains=search_query) |
+                Q(start_date__icontains=search_query) |
+                Q(end_date__icontains=search_query)
+            )
+
         serializer = self.get_serializer(projects, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         user = self.request.user
         projects = Project.objects.filter(project_owner=user)
+
         serializer = self.get_serializer(projects, many=True)
         return Response(serializer.data)
 
