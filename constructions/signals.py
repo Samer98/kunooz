@@ -13,4 +13,6 @@ def project_member_added(sender, instance, created, **kwargs):
         message = f"You have joined the project: {instance.project.title}"
         type = "project_member"
         # Create a notification for the user who joined the project
-        Notification.objects.create(user=instance.member, message=message,type=type)
+        Notification.objects.create(user=instance.member, message=message,type=type,
+                                    extra_data={"project_id": instance.project.id,
+                                                })

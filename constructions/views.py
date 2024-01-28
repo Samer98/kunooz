@@ -23,6 +23,8 @@ class ProjectViewSet(CreateModelMixin, RetrieveModelMixin,DestroyModelMixin,List
     queryset = Project.objects.all()
     serializer_class = ProjectSerializers
     permission_classes = [IsConsultant]
+    filter_backends = [SearchFilter]
+    search_fields = ['title','start_date','start_date']
 
     def list(self, request, *args, **kwargs):
         user = self.request.user

@@ -35,4 +35,4 @@ class NotificationViewSet( RetrieveModelMixin, ListModelMixin,GenericViewSet):
     def notification_count(self,request):
         count = Notification.objects.filter(user=self.request.user,is_read=False).count()
 
-        return Response(count)
+        return Response(data=count)

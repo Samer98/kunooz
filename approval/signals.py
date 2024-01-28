@@ -4,17 +4,17 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from notifcations.models import Notification
-from .models import AdditionalModificationComment
+from .models import ApprovalComment
 
-@receiver(post_save, sender=AdditionalModificationComment)
-def new_additional_modification_comment_created(sender, instance, created, **kwargs):
+@receiver(post_save, sender=ApprovalComment)
+def new_approval_comment_created(sender, instance, created, **kwargs):
     if created:
         # Customize the message based on your needs
-        message = f"New Additional Modification  comment created at project {instance.additional_modification.project}"
-        type = "additional_modification_comment"
+        message = f"New approval comment created at project {instance.approval.project}"
+        type = "approval_comment"
         # Create a notification for the user who joined the project
         Notification.objects.create(user=instance.user, message=message,type=type,
-                                    extra_data = {"project_id":instance.additional_modification.project.id,
-                                                  "additional_modification":str(instance.additional_modification),
+                                    extra_data = {"project_id":instance.approval.project.id,
+                                                  "approval":str(instance.approval),
                                                   "comment_id":instance.id})
         # Notification.set_extra_data({"project_id":instance.additional_modification.project.id, "user_id": new_member.id})
