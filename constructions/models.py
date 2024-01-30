@@ -7,7 +7,7 @@ from members.models import User
 
 class Project(models.Model):
     OUTER_DESIGN_CHOICES = (
-        ('ٌResidential', 'Residential'),
+        ('Residential', 'Residential'),
         ('Commercial', 'Commercial'),
         ('industrial', 'industrial'),
         ('General', 'General'),

@@ -27,7 +27,7 @@ class ProjectSerializers(serializers.ModelSerializer):
             user_data = {
                 'id': obj.project_owner.id,
                 'first_name': obj.project_owner.first_name,
-                'second_name': obj.project_owner.last_name,
+                'second_name': obj.project_owner.second_name,
                 # 'profile_picture': obj.project_owner.profile_picture.url if obj.project_owner.profile_picture else None,
                 # 'role': str(obj.project_owner.role),
                 # 'phone_number': str(obj.project_owner.phone_number)
