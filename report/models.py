@@ -16,14 +16,14 @@ def validate_file_size(value):
 
 class Report(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    worker_name = models.CharField(max_length=255, null=False, blank=False)
-    file = models.FileField(upload_to='offer_price_files', null=True, blank=True,
+    title = models.CharField(max_length=255, null=False, blank=False)
+    file = models.FileField(upload_to='report_files', null=True, blank=True,
                             validators=[validate_file_size])
     note = models.TextField()
     date_created = models.DateField(auto_created=True, auto_now=True)
 
     def __str__(self):
-        return str(self.project) + " | " + str(self.worker_name)
+        return str(self.project) + " | " + str(self.title)
 
 
 class ReportComment(models.Model):

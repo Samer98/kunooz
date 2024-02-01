@@ -40,7 +40,7 @@ class ReportViewSet(ModelViewSet):
         owner = self.request.user
         project = get_object_or_404(Project, id=project_id)
 
-        name_filter = self.request.query_params.get('worker_name')
+        name_filter = self.request.query_params.get('title')
         start_date_filter = self.request.query_params.get('start_date')
         end_date_filter = self.request.query_params.get('end_date')
 
