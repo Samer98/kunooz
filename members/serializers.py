@@ -11,6 +11,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super(CustomTokenObtainPairSerializer, self).validate(attrs)
         data.update({'id': self.user.id})
         data.update({'first_name': self.user.first_name})
+        data.update({'second_name': self.user.second_name})
         data.update({'role': str(self.user.role)})
         data.update({'profile_picture': str(self.user.profile_picture)})
         return data
