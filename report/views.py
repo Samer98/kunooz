@@ -44,7 +44,7 @@ class ReportViewSet(ModelViewSet):
         start_date_filter = self.request.query_params.get('start_date')
         end_date_filter = self.request.query_params.get('end_date')
 
-        if project.project_owner != owner:
+        if project.project_owner != owner :
             raise PermissionDenied("Not the owner of the project")
 
         records = Report.objects.filter(project_id=project_id)
