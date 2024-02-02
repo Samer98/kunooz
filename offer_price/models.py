@@ -23,7 +23,7 @@ class OfferPrice(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
     project_duration = models.CharField(max_length=255, null=True, blank=True)
     bid_price = models.IntegerField(validators=[MinValueValidator(0)])
-    file = models.FileField(upload_to='report_files', null=True, blank=True,
+    file = models.FileField(upload_to='offer_price_files', null=True, blank=True,
                             validators=[validate_file_size])
     note = models.TextField()
     date_created = models.DateField(auto_created=True, auto_now=True)
@@ -36,7 +36,7 @@ class OfferPriceComment(models.Model):
     offer_price = models.ForeignKey(OfferPrice, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
-    file = models.FileField(upload_to='report_comment_files', null=True, blank=True,
+    file = models.FileField(upload_to='offer_price_comment_files', null=True, blank=True,
                             validators=[validate_file_size])
 
     date_created = models.DateField(auto_created=True, auto_now=True)

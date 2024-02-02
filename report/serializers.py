@@ -4,9 +4,26 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class ReportSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
+    user = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Report
-        fields = ['id','project','title','note','file','date_created']
+        fields = ['id','project','user','title','note','file','date_created']
+
+    def get_user(self, obj):
+        request = self.context.get('request', None)
+        if request and request.user.is_authenticated:
+            user_data = {
+                'id': request.user.id,
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+                'job_name': request.user.job_name if request.user.job_name else None,
+                'profile_picture': request.user.profile_picture.url if request.user.profile_picture else None,
+                'role': str(request.user.role),
+                'phone_number': str(request.user.phone_number)
+            }
+            return user_data
+        return None
 
 class ReportCommentSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
