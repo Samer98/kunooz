@@ -8,4 +8,7 @@ router.register('Report', views.ReportViewSet,basename="Report")
 router.register('ReportComment', views.ReportCommentViewSet,basename="ReportComment")
 
 urlpatterns = [
+                  path('projects/<int:project_id>/reports/<int:pk>/',
+                       views.ReportViewSet.as_view({'get': 'record_info', 'put': 'record_info'}),
+                       name='report-record-info'),
               ] + router.urls
