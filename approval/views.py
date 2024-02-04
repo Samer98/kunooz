@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from django.utils.translation import gettext as _
 from kunooz.permissions import IsConsultant, IsContractor, IsOwner, IsConsultant_Contractor_Owner
 from django.utils.dateparse import parse_date
+from rest_framework.decorators import action
 
 
 # Create your views here.
@@ -58,8 +59,10 @@ class ApprovalViewSet(ModelViewSet):
             except (ValueError, TypeError):
                 raise PermissionDenied("Invalid date format. Use YYYY-MM-DD")
 
-        serializer = self.get_serializer(records, many=True)
-        return Response(serializer.data)
+
+        page = self.paginate_queryset(records)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         owner = self.request.user
@@ -77,17 +80,33 @@ class ApprovalViewSet(ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def update(self, request, *args, **kwargs):
-        record = self.get_object()
-        user = request.user
-        if record.project.project_owner != user:
-            raise PermissionDenied(_("You are not the owner of this record"))
+    @action(detail=True, methods=['GET', 'PUT'])
+    def record_info(self, request, project_id, pk):
+        user = self.request.user
+        project = get_object_or_404(Project, id=project_id)
 
-        serializer = self.get_serializer(record, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
 
-        return Response(serializer.data)
+        if not project_member and project.project_owner != user:
+            return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
+
+        # Get the record
+        record = get_object_or_404(Approval, id=pk, project_id=project_id)
+
+        if request.method == 'GET':
+            serializer = self.get_serializer(record)
+            return Response(serializer.data)
+
+        elif request.method == 'PUT':
+            # Check ownership of the record
+            if record.project.project_owner != user:
+                raise PermissionDenied("You are not the owner of this record")
+
+            serializer = self.get_serializer(record, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
         record = self.get_object()
