@@ -90,11 +90,11 @@ class PricingTenderViewSet(ModelViewSet):
                     continue
 
                 # Check if the user exists and is not a consultant
-                # if user_to_add.role != 'Contractor':
-                #     print('user mot Contractor')
-                #     not_valid_ids.append((user_to_add, 'user need to be Contractor'))
-                #
-                #     continue
+                if user_to_add.role != 'Contractor':
+                    print('user mot Contractor')
+                    not_valid_ids.append((user_to_add, 'user need to be Contractor'))
+
+                    continue
 
                 # Check if the user is already a member of the project
                 if PricingTenderContractor.objects.filter(pricing_tender=instance, member=user_to_add).exists():
