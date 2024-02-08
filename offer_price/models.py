@@ -1,13 +1,9 @@
-
-
-
-################
 from django.core.validators import MinValueValidator
 from django.db import models
 from constructions.models import Project
 from django.core.exceptions import ValidationError
 from members.models import User
-
+from pricing_tender.models import PricingTender
 
 # Create your models here.
 
@@ -19,7 +15,7 @@ def validate_file_size(value):
 
 
 class OfferPrice(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    price_tender = models.ForeignKey(PricingTender, on_delete=models.CASCADE)
     title = models.CharField(max_length=255, null=False, blank=False)
     project_duration = models.CharField(max_length=255, null=True, blank=True)
     bid_price = models.IntegerField(validators=[MinValueValidator(0)])
@@ -29,7 +25,7 @@ class OfferPrice(models.Model):
     date_created = models.DateField(auto_created=True, auto_now=True)
 
     def __str__(self):
-        return str(self.project) + " | " + str(self.title)
+        return str(self.price_tender) + " | " + str(self.title)
 
 
 class OfferPriceComment(models.Model):

@@ -2,6 +2,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
@@ -51,13 +52,20 @@ def generate_otp(length=6):
 def error_404_view(request, exception):
     return render(request, '404.html')
 
-
+from django_filters import rest_framework as django_filters
+from django_filters import rest_framework as filters
+class ProfileFilter(django_filters.FilterSet):
+    role = filters.CharFilter(field_name='role__role', lookup_expr='icontains')
+    class Meta:
+        model = User
+        fields = ['role']
 class ProfileViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter,DjangoFilterBackend]
     search_fields = ['phone_number','first_name','last_name']
+    filterset_class = ProfileFilter
 
     def get_permissions(self):
 

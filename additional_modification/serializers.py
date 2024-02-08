@@ -37,7 +37,7 @@ class AdditionalModificationCommentSerializers(serializers.ModelSerializer):
             user_data = {
                 'id': obj.user.id,
                 'first_name': obj.user.first_name,
-                'last_name': obj.user.last_name,
+                'second_name': obj.user.second_name,
                 'profile_picture': obj.user.profile_picture.url if obj.user.profile_picture else None,
                 'role': str(obj.user.role),
                 'phone_number': str(obj.user.phone_number)

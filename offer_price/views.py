@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from django.utils.translation import gettext as _
 from kunooz.permissions import IsConsultant, IsContractor, IsOwner, IsConsultant_Contractor_Owner
 from django.utils.dateparse import parse_date
-
+from pricing_tender.models import PricingTenderContractor,PricingTender
 
 # Create your views here.
 
@@ -36,18 +36,18 @@ class OfferPriceViewSet(ModelViewSet):
         return [IsConsultant()]
 
     def retrieve(self, request, *args, **kwargs):
-        project_id = self.kwargs.get('pk')  # Get project_name from URL
-        owner = self.request.user
-        project = get_object_or_404(Project, id=project_id)
+        price_tender_id = self.kwargs.get('pk')  # Get project_name from URL
+        user = self.request.user
+        price_tender = get_object_or_404(PricingTender, id=price_tender_id)
 
         name_filter = self.request.query_params.get('title')
         start_date_filter = self.request.query_params.get('start_date')
         end_date_filter = self.request.query_params.get('end_date')
 
-        if project.project_owner != owner:
+        if price_tender.pricing_tender_owner != user:
             raise PermissionDenied("Not the owner of the project")
 
-        records = OfferPrice.objects.filter(project_id=project_id)
+        records = OfferPrice.objects.filter(project_id=price_tender_id)
 
         if name_filter:
             records = records.filter(title__icontains=name_filter)
@@ -64,12 +64,15 @@ class OfferPriceViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        owner = self.request.user
-        project_id = self.request.data.get('project')
-        project = get_object_or_404(Project, id=project_id)
+        user = self.request.user
+        pricing_tender_id = self.request.data.get('pricing_tender_id')
+        pricing_tender = get_object_or_404(PricingTender, id=pricing_tender_id)
+        project_member = PricingTenderContractor.objects.filter(project_id=pricing_tender_id, member=user)
 
-        if project.project_owner != owner:
-            raise PermissionDenied("Not the owner of the project")
+        if not project_member and pricing_tender.pricing_tender_owner != user:
+            return PermissionDenied("Not a member of the project")
+        # if project.project_owner != owner:
+        #     raise PermissionDenied("Not the owner of the project")
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -80,7 +83,7 @@ class OfferPriceViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         record = self.get_object()
         user = request.user
-        if record.project.project_owner != user:
+        if record.price_tender.pricing_tender_owner != user:
             raise PermissionDenied(_("You are not the owner of this record"))
 
         serializer = self.get_serializer(record, data=request.data, partial=True)
@@ -94,7 +97,7 @@ class OfferPriceViewSet(ModelViewSet):
         user = request.user
 
         print(record)
-        if record.project_owner != user:
+        if record.price_tender.pricing_tender_owner != user:
             raise PermissionDenied(_("You are not the owner of this record"))
 
         record.delete()

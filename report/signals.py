@@ -7,7 +7,7 @@ from notifcations.models import Notification
 from .models import ReportComment
 
 @receiver(post_save, sender=ReportComment)
-def new_approval_comment_created(sender, instance, created, **kwargs):
+def new_report_comment_created(sender, instance, created, **kwargs):
     if created:
         # Customize the message based on your needs
         message = f"New Report comment created at project {instance.report.project}"
@@ -15,6 +15,22 @@ def new_approval_comment_created(sender, instance, created, **kwargs):
         # Create a notification for the user who joined the project
         Notification.objects.create(user=instance.user, message=message,type=type,
                                     extra_data = {"project_id":instance.report.project.id,
-                                                  "approval":str(instance.report),
+                                                  "report":str(instance.report),
                                                   "comment_id":instance.id})
         # Notification.set_extra_data({"project_id":instance.additional_modification.project.id, "user_id": new_member.id})
+
+
+
+@receiver(post_save, sender=ReportComment)
+def new_report_created(sender, instance, created, **kwargs):
+    if created:
+        # Customize the message based on your needs
+        message = f"New Report created at project {instance.report.project}"
+        type = "report"
+        project = instance.report.project
+        project_owner_id = project.owner.id
+        # Create a notification for the user who joined the project
+        Notification.objects.create(user=project_owner_id, message=message,type=type,
+                                    extra_data = {"project_id":instance.report.project.id,
+                                                  "report":str(instance.report)}
+                                                  )

@@ -29,6 +29,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
                   'role','company_name','services','Commercial_license']
 
 class ProfileSerializer(serializers.ModelSerializer):
+    role = serializers.StringRelatedField()
     class Meta:
         model = User
         fields = ['id','first_name','second_name','phone_number',
