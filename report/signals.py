@@ -28,7 +28,7 @@ def new_report_created(sender, instance, created, **kwargs):
         message = f" تم إنشاء تقرير جديد في المشروع {instance.report.project}"
         type = "report"
         project = instance.report.project
-        project_owner_id = project.owner.id
+        project_owner_id = project.project_owner
         # Create a notification for the user who joined the project
         Notification.objects.create(user=project_owner_id, message=message,type=type,
                                     extra_data = {"project_id":instance.report.project.id,
