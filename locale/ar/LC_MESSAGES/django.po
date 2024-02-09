@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-09 19:47+0200\n"
+"POT-Creation-Date: 2024-02-09 19:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,3 +85,9 @@ msgstr "التواريخ المهمة"
 #: .\members\views.py:191
 msgid "This phone number is verified"
 msgstr "هذا المحمول تم التحقق منه"
+
+#: .\note\signals.py:14
+#, fuzzy, python-brace-format
+#| msgid "New approval comment created at project {instance.approval.project}"
+msgid "New Note comment created at project {instance.note.project}"
+msgstr "تم إنشاء تعليق موافقة جديد في المشروع {instance.approval.project}"

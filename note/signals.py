@@ -16,6 +16,6 @@ def new_note_comment_created(sender, instance, created, **kwargs):
         # Create a notification for the user who joined the project
         Notification.objects.create(user=instance.user, message=message,type=type,
                                     extra_data = {"project_id":instance.note.project.id,
-                                                  "approval":str(instance.note),
+                                                  "note_id":instance.note.id,
                                                   "comment_id":instance.id})
         # Notification.set_extra_data({"project_id":instance.additional_modification.project.id, "user_id": new_member.id})
