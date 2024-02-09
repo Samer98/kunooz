@@ -103,9 +103,9 @@ class NoteCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
     permission_classes = [IsConsultant_Contractor_Owner]
 
     def retrieve(self, request, *args, **kwargs):
-        approval_id = self.kwargs.get('pk')  # Get project_name from URL
+        note_id = self.kwargs.get('pk')  # Get project_name from URL
         user = self.request.user
-        note = get_object_or_404(Note, id=approval_id)
+        note = get_object_or_404(Note, id=note_id)
         project_id = note.project_id
         project = get_object_or_404(Project, id=project_id)
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
@@ -113,7 +113,7 @@ class NoteCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
         if not project_member and project.project_owner != user:
             return Response("Not a member of the project", status=status.HTTP_400_BAD_REQUEST)
 
-        records = NoteComment.objects.filter(approval=approval_id)
+        records = NoteComment.objects.filter(note=note_id)
 
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)
