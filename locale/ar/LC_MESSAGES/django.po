@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-19 23:24+0200\n"
+"POT-Creation-Date: 2024-02-09 19:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,30 +18,70 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
-#: .\kunooz\settings.py:212
-msgid "Arabic"
+
+#: .\additional_modification\signals.py:14
+#, python-brace-format
+msgid ""
+"New Additional Modification  comment created at project {instance."
+"additional_modification.project}"
 msgstr ""
 
-#: .\kunooz\settings.py:213
-msgid "English"
+#: .\additional_modification\views.py:117 .\approval\views.py:117
+#: .\note\views.py:81 .\note\views.py:95 .\offer_price\views.py:87
+#: .\offer_price\views.py:101 .\pricing_tender\views.py:173
+#: .\pricing_tender\views.py:296 .\pricing_tender\views.py:309
+#: .\report\views.py:123
+msgid "You are not the owner of this record"
 msgstr ""
+
+#: .\approval\signals.py:14
+#, python-brace-format
+msgid "New approval comment created at project {instance.approval.project}"
+msgstr "تم إنشاء تعليق موافقة جديد في المشروع {instance.approval.project}"
+
+#: .\constructions\signals.py:14
+#, python-brace-format
+msgid "You have joined the project: {instance.project.title}"
+msgstr "لقد انضممت إلى المشروع: {instance.project.title}"
+
+#: .\constructions\views.py:55
+msgid "The user reached the limit of projects"
+msgstr "لقد وصل المستخدم إلى الحد الأقصى للمشاريع"
+
+#: .\constructions\views.py:95 .\constructions\views.py:138
+#: .\constructions\views.py:157
+msgid "You are not the owner of this project"
+msgstr "أنت لست صاحب هذا المشروع"
+
+#: .\constructions\views.py:141
+#, python-brace-format
+msgid "Project {project.title} deleted successfully"
+msgstr "تم حذف المشروع {project.title} بنجاح"
+
+#: .\kunooz\settings.py:240
+msgid "Arabic"
+msgstr "العربية"
+
+#: .\kunooz\settings.py:241
+msgid "English"
+msgstr "الإنجليزية"
 
 #: .\members\admin.py:14
 msgid "Personal info"
-msgstr ""
+msgstr "المعلومات الشخصية"
 
 #: .\members\admin.py:15
 msgid "Employee info"
-msgstr ""
+msgstr "معلومات الموظف"
 
 #: .\members\admin.py:17
 msgid "Permissions"
-msgstr ""
+msgstr "الأذونات"
 
 #: .\members\admin.py:19
 msgid "Important dates"
-msgstr ""
+msgstr "التواريخ المهمة"
 
-#: .\members\views.py:184
+#: .\members\views.py:191
 msgid "This phone number is verified"
-msgstr "هذا المحمول تمام"
+msgstr "هذا المحمول تم التحقق منه"
