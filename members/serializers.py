@@ -14,6 +14,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data.update({'second_name': self.user.second_name})
         data.update({'role': str(self.user.role)})
         data.update({'profile_picture': str(self.user.profile_picture)})
+        data.update({'projects_limits': str(self.user.projects_limits)})
         return data
 
 class UserCreateSerializer(BaseUserCreateSerializer):
