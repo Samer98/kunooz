@@ -8,7 +8,7 @@ from .models import NoteComment
 from django.utils.translation import gettext_lazy as _
 
 @receiver(post_save, sender=NoteComment)
-def new_approval_comment_created(sender, instance, created, **kwargs):
+def new_note_comment_created(sender, instance, created, **kwargs):
     if created:
         # Customize the message based on your needs
         message = _(f"New Note comment created at project {instance.note.project}")
