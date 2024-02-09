@@ -74,11 +74,11 @@ class ReportViewSet(ModelViewSet):
         project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
 
         if not project_member and project.project_owner != user:
-            return PermissionDenied("Not a member of the project")
+            raise PermissionDenied("Not a member of the project")
         # if project.project_owner != owner:
         #     raise PermissionDenied("Not the owner of the project")
-        if user.role != "Consultant":
-            return PermissionDenied("Not a Consultant")
+        if str(user.role) != "Consultant":
+            raise PermissionDenied("Not a Consultant")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
