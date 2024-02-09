@@ -36,3 +36,10 @@ class NotificationViewSet( RetrieveModelMixin, ListModelMixin,GenericViewSet):
         count = Notification.objects.filter(user=self.request.user,is_read=False).count()
 
         return Response(data=count)
+
+    @action(detail=False, methods=['POST'])
+    def mark_all_as_read(self, request):
+        # Mark all unread notifications for the authenticated user as read
+        unread_notifications = Notification.objects.filter(user=self.request.user, is_read=False)
+        unread_notifications.update(is_read=True)
+        return Response(status=204)
