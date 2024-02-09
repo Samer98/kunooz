@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 def project_member_added(sender, instance, created, **kwargs):
     if created:
         # Customize the message based on your needs
-        message = _(f"You have joined the project: {instance.project.title}")
+        message = _(f"لقد انضممت إلى المشروع: {instance.project.title}")
         type = "project_member"
         # Create a notification for the user who joined the project
         Notification.objects.create(user=instance.member, message=message,type=type,

@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 def new_note_comment_created(sender, instance, created, **kwargs):
     if created:
         # Customize the message based on your needs
-        message = _(f"New Note comment created at project {instance.note.project}")
+        message = _(f"تم إنشاء تعليق جديد على الملاحظة في المشروع {instance.note.project}")
         type = "note_comment"
         # Create a notification for the user who joined the project
         Notification.objects.create(user=instance.user, message=message,type=type,
