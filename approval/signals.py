@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 def new_approval_comment_created(sender, instance, created, **kwargs):
     if created:
         # Customize the message based on your needs
-        message = _(f"New approval comment created at project {instance.approval.project}")
+        message = _(f"تم إنشاء تعليق موافقة جديد في المشروع {instance.approval.project}")
         type = "approval_comment"
         # Create a notification for the user who joined the project
         Notification.objects.create(user=instance.user, message=message,type=type,
