@@ -27,7 +27,7 @@ class ProjectViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         user = self.request.user
-        projects = Project.objects.filter(project_owner=user)
+        projects = Project.objects.filter(Q(project_owner=user) | Q(projectmember__member=user)).distinct()
         search_query = self.request.query_params.get('search', None)
         if search_query:
             projects = projects.filter(
@@ -41,9 +41,13 @@ class ProjectViewSet(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         user = self.request.user
-        projects = Project.objects.filter(project_owner=user)
 
-        serializer = self.get_serializer(projects, many=True)
+        project = self.get_object()
+
+        if user != project.project_owner and not project.projectmember_set.filter(member=user).exists():
+            return Response(_("You don't have permission to view this project"), status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(project, many=True)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
