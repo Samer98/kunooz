@@ -41,13 +41,12 @@ class ProjectViewSet(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         user = self.request.user
-
+        # projects = Project.objects.filter(project_owner=user)
         project = self.get_object()
-
+        print(project.projectmember_set.filter(member=user).exists())
         if user != project.project_owner and not project.projectmember_set.filter(member=user).exists():
             return Response(_("You don't have permission to view this project"), status=status.HTTP_403_FORBIDDEN)
-
-        serializer = self.get_serializer(project, many=True)
+        serializer = self.get_serializer(project)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):

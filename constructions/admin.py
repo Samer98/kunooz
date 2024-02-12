@@ -8,10 +8,10 @@ from .models import Project,ProjectMember
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title','project_owner','status']
+    list_display = ['id', 'title','project_owner','creation_date','status']
     list_editable = ['status']
 
 
 @admin.register(ProjectMember)
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectMemberAdmin(admin.ModelAdmin):
     list_display = ['id', 'project','member']
