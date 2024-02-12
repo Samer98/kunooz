@@ -30,7 +30,7 @@ class Project(models.Model):
     start_date = models.DateField(null=False, blank=False)
     end_date = models.DateField(null=False, blank=False)
     status = models.CharField(choices=STATUS_CHOICES, max_length=255, default="On Going")
-
+    creation_date = models.DateTimeField(auto_now_add=True)  # Add creation date field
     def __str__(self):
         return str(self.title) + " | " + str(self.project_owner.first_name)
 

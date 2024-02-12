@@ -16,11 +16,13 @@ class ProjectSerializers(serializers.ModelSerializer):
     # project_owner = serializers.CharField(max_length=255,read_only=True)
     members = ProjectMembersSerializers(many=True, source='projectmember_set', read_only=True)
     project_owner = serializers.SerializerMethodField(read_only=True)
+    creation_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)  # Include creation date
+
 
     class Meta:
         model = Project
         fields = ['id','title','project_number','project_owner','style','room_number','space','location',
-                  "outer_design",'total_budget',"start_date","end_date","status",'members']
+                  "outer_design",'total_budget',"start_date","end_date","status",'members','creation_date']
 
     def get_project_owner(self, obj):
         if obj.project_owner:
