@@ -30,7 +30,27 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(get_user_model(), CustomUserAdmin)
-admin.site.register(Role)
-# @admin.register(Consultant)
-# class ConsultantAdmin(admin.ModelAdmin):
-#     list_display = ['email','full_name','job_name']
+
+
+# class RoleAdmin(admin.ModelAdmin):
+#
+
+# Register the Role model with the custom admin class
+# admin.site.register(Role, RoleAdmin)
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ['id', 'role']
+
+    def has_add_permission(self, request):
+        # Prevent adding new roles
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        # Prevent deleting existing roles
+        return False
+
+    def get_readonly_fields(self, request, obj=None):
+        # Make all fields readonly
+        if obj:
+            return [field.name for field in self.model._meta.fields]
+        return []
