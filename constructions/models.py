@@ -1,22 +1,23 @@
 from django.db import models
 from .locations import CITY_CHOICES
 from members.models import User
-
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
 class Project(models.Model):
     OUTER_DESIGN_CHOICES = (
-        ('Residential', 'Residential'),
-        ('Commercial', 'Commercial'),
-        ('industrial', 'industrial'),
-        ('General', 'General'),
-        ('Farms', 'Farms')
+        ('Residential', _('Residential')),
+        ('Commercial', _('Commercial')),
+        ('Industrial', _('Industrial')),  # Corrected capitalization
+        ('General', _('General')),
+        ('Farms', _('Farms'))
     )
+
     STATUS_CHOICES = (
-        ('On Going', 'On Going'),
-        ('Completed', 'Completed'),
-        ('Canceled', 'Canceled'),
+        ('On Going', _('On Going')),  # Corrected spacing
+        ('Completed', _('Completed')),
+        ('Canceled', _('Canceled')),
     )
     title = models.CharField(max_length=255, null=False, blank=False)
     project_owner = models.ForeignKey(User, on_delete=models.PROTECT)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-09 19:57+0200\n"
+"POT-Creation-Date: 2024-02-12 19:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: .\additional_modification\signals.py:14
 #, python-brace-format
 msgid ""
-"New Additional Modification  comment created at project {instance."
+"تم إنشاء تعليق جديد على التعديل الإضافي في المشروع {instance."
 "additional_modification.project}"
 msgstr ""
 
@@ -36,33 +36,71 @@ msgstr ""
 
 #: .\approval\signals.py:14
 #, python-brace-format
-msgid "New approval comment created at project {instance.approval.project}"
-msgstr "تم إنشاء تعليق موافقة جديد في المشروع {instance.approval.project}"
+msgid "تم إنشاء تعليق موافقة جديد في المشروع {instance.approval.project}"
+msgstr ""
+
+#: .\constructions\models.py:10
+msgid "Residential"
+msgstr ""
+
+#: .\constructions\models.py:11
+msgid "Commercial"
+msgstr ""
+
+#: .\constructions\models.py:12
+msgid "Industrial"
+msgstr ""
+
+#: .\constructions\models.py:13
+msgid "General"
+msgstr ""
+
+#: .\constructions\models.py:14
+msgid "Farms"
+msgstr ""
+
+#: .\constructions\models.py:18
+msgid "On Going"
+msgstr "قيد العمل"
+
+#: .\constructions\models.py:19
+msgid "Completed"
+msgstr "تم"
+
+#: .\constructions\models.py:20
+msgid "Canceled"
+msgstr "ملغى"
 
 #: .\constructions\signals.py:14
 #, python-brace-format
-msgid "You have joined the project: {instance.project.title}"
-msgstr "لقد انضممت إلى المشروع: {instance.project.title}"
+msgid "لقد انضممت إلى المشروع: {instance.project.title}"
+msgstr ""
 
-#: .\constructions\views.py:55
+#: .\constructions\views.py:48
+#, fuzzy
+#| msgid "You are not the owner of this project"
+msgid "You don't have permission to view this project"
+msgstr "أنت لست صاحب هذا المشروع"
+
+#: .\constructions\views.py:58
 msgid "The user reached the limit of projects"
 msgstr "لقد وصل المستخدم إلى الحد الأقصى للمشاريع"
 
-#: .\constructions\views.py:95 .\constructions\views.py:138
-#: .\constructions\views.py:157
+#: .\constructions\views.py:98 .\constructions\views.py:141
+#: .\constructions\views.py:160
 msgid "You are not the owner of this project"
 msgstr "أنت لست صاحب هذا المشروع"
 
-#: .\constructions\views.py:141
+#: .\constructions\views.py:144
 #, python-brace-format
 msgid "Project {project.title} deleted successfully"
 msgstr "تم حذف المشروع {project.title} بنجاح"
 
-#: .\kunooz\settings.py:240
+#: .\kunooz\settings.py:241
 msgid "Arabic"
 msgstr "العربية"
 
-#: .\kunooz\settings.py:241
+#: .\kunooz\settings.py:242
 msgid "English"
 msgstr "الإنجليزية"
 
@@ -87,7 +125,19 @@ msgid "This phone number is verified"
 msgstr "هذا المحمول تم التحقق منه"
 
 #: .\note\signals.py:14
+#, python-brace-format
+msgid "تم إنشاء تعليق جديد على الملاحظة في المشروع {instance.note.project}"
+msgstr ""
+
+#, python-brace-format
+#~ msgid "New approval comment created at project {instance.approval.project}"
+#~ msgstr "تم إنشاء تعليق موافقة جديد في المشروع {instance.approval.project}"
+
+#, python-brace-format
+#~ msgid "You have joined the project: {instance.project.title}"
+#~ msgstr "لقد انضممت إلى المشروع: {instance.project.title}"
+
 #, fuzzy, python-brace-format
-#| msgid "New approval comment created at project {instance.approval.project}"
-msgid "New Note comment created at project {instance.note.project}"
-msgstr "تم إنشاء تعليق موافقة جديد في المشروع {instance.approval.project}"
+#~| msgid "New approval comment created at project {instance.approval.project}"
+#~ msgid "New Note comment created at project {instance.note.project}"
+#~ msgstr "تم إنشاء تعليق موافقة جديد في المشروع {instance.approval.project}"
