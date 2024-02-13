@@ -137,6 +137,11 @@ class ApprovalCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSe
 
         records = ApprovalComment.objects.filter(approval=approval_id)
 
+        page = self.paginate_queryset(records)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = self.get_serializer(records, many=True)
         return Response(serializer.data)
 
