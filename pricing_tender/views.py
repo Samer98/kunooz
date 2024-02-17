@@ -90,7 +90,7 @@ class PricingTenderViewSet(ModelViewSet):
                     continue
 
                 # Check if the user exists and is not a consultant
-                if user_to_add.role != 'Contractor':
+                if str(user_to_add.role) != 'Contractor':
                     print('user mot Contractor')
                     not_valid_ids.append((user_to_add, 'user need to be Contractor'))
 
