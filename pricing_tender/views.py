@@ -30,9 +30,9 @@ class PricingTenderViewSet(ModelViewSet):
         return [IsConsultant()]
 
     def get_queryset(self):
-        owner = self.request.user
-        queryset = PricingTender.objects.filter(pricing_tender_owner=owner)
-
+        user = self.request.user
+        queryset = PricingTender.objects.filter(
+            Q(pricing_tender_owner=user) | Q(pricingtendercontractor__member=user))
         # Additional filters can be applied here if needed
         name_filter = self.request.query_params.get('project_name')
         start_date_filter = self.request.query_params.get('start_date')
