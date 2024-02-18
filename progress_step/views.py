@@ -212,6 +212,7 @@ class ProgressStepViewSet(ModelViewSet):
                     user=user,
                     order=main_step_order
                 )
+                main_step_order +=1
 
                 for sub_step_title in sub_steps:
                     # Create sub-steps
