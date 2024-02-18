@@ -4,9 +4,11 @@ from .models import Note, NoteComment
 class NoteSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
     user = serializers.SerializerMethodField(read_only=True)
+    comments_count = serializers.SerializerMethodField(read_only=True)  # Add this field
+
     class Meta:
         model = Note
-        fields = ['id','project','user','title','note','file','date_created']
+        fields = ['id','project','user','title','note','file',"comments_count",'date_created']
 
     def get_user(self, obj):
         request = self.context.get('request', None)
@@ -22,6 +24,8 @@ class NoteSerializers(serializers.ModelSerializer):
             }
             return user_data
         return None
+    def get_comments_count(self, obj):
+        return obj.notecomment_set.count()
 
 class NoteCommentSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
