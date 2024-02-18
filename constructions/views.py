@@ -28,13 +28,23 @@ class ProjectViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         user = self.request.user
         projects = Project.objects.filter(Q(project_owner=user) | Q(projectmember__member=user)).distinct()
-        search_query = self.request.query_params.get('search', None)
-        if search_query:
-            projects = projects.filter(
-                Q(title__icontains=search_query) |
-                Q(start_date__icontains=search_query) |
-                Q(end_date__icontains=search_query)
-            )
+
+        # Get query parameters from URL
+        title_query = self.request.query_params.get('title', None)
+        start_date_query = self.request.query_params.get('start_date', None)
+        end_date_query = self.request.query_params.get('end_date', None)
+
+        if title_query:
+            # If there's a title query, filter by it
+            projects = projects.filter(title__icontains=title_query)
+
+        if start_date_query:
+            # If there's a start_date query, filter by it
+            projects = projects.filter(start_date=start_date_query)
+
+        if end_date_query:
+            # If there's an end_date query, filter by it
+            projects = projects.filter(end_date=end_date_query)
 
         serializer = self.get_serializer(projects, many=True)
         return Response(serializer.data)
