@@ -202,15 +202,15 @@ class ProgressStepViewSet(ModelViewSet):
         # Create a dictionary mapping ID to the corresponding instance
         predefined_steps = Arabic_progress_step if language == "AR" else English_progress_step
         with transaction.atomic():
+            main_step_order = 0
             for main_step, sub_steps in predefined_steps.items():
                 order = sub_steps.index(sub_steps[0])  # Use the order of the first sub-step
-
                 # Create main step
                 main_step_creation = ProgressStep.objects.create(
                     project=project,
                     title=main_step,
                     user=user,
-                    order=order
+                    order=main_step_order
                 )
 
                 for sub_step_title in sub_steps:
@@ -222,7 +222,7 @@ class ProgressStepViewSet(ModelViewSet):
                         user=user,
                         order=order
                     )
-
+                    order += 1
         return Response({"message": f"Standard steps created successfully for Project {project_id}"},
                         status=status.HTTP_200_OK)
 
