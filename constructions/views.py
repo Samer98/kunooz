@@ -38,13 +38,15 @@ class ProjectViewSet(ModelViewSet):
             # If there's a title query, filter by it
             projects = projects.filter(title__icontains=title_query)
 
-        if start_date_query:
-            # If there's a start_date query, filter by it
-            projects = projects.filter(start_date=start_date_query)
-
-        if end_date_query:
-            # If there's an end_date query, filter by it
-            projects = projects.filter(end_date=end_date_query)
+        if start_date_query and end_date_query:
+            # If both start_date and end_date are provided, filter projects by date range
+            try:
+                start_date = datetime.strptime(start_date_query, '%Y-%m-%d')
+                end_date = datetime.strptime(end_date_query, '%Y-%m-%d')
+                projects = projects.filter(start_date__gte=start_date, end_date__lte=end_date)
+            except ValueError:
+                # Handle invalid date format
+                return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.get_serializer(projects, many=True)
         return Response(serializer.data)
