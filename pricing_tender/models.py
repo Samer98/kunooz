@@ -37,7 +37,7 @@ class PricingTenderContractor(models.Model):
     member = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.pricing_tender) + " | " + str(self.contractor.first_name)
+        return str(self.pricing_tender) + " | " + str(self.member.first_name)
 
 
 class OfferPrice(models.Model):
@@ -52,7 +52,7 @@ class OfferPrice(models.Model):
     date_created = models.DateField(auto_created=True, auto_now=True)
 
     def __str__(self):
-        return str(self.PricingTender) + " | " + str(self.title)
+        return str(self.pricing_tender) + " | " + str(self.title)
 
 # class PricingTinderComment(models.Model):
 #     pricing_tender = models.ForeignKey(PricingTender , on_delete=models.CASCADE)

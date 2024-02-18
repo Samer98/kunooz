@@ -48,6 +48,8 @@ class ReportViewSet(ModelViewSet):
             raise PermissionDenied("Not the owner of the project")
 
         records = Report.objects.filter(project_id=project_id)
+        # print(records)
+        # records_comment = ReportComment.objects.filter(report=report_id)
 
         if name_filter:
             records = records.filter(title__icontains=name_filter)

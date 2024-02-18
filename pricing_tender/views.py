@@ -90,8 +90,10 @@ class PricingTenderViewSet(ModelViewSet):
                     continue
 
                 # Check if the user exists and is not a consultant
-                if user_to_add.role != 'Contractor':
-                    print('user mot Contractor')
+                if str(user_to_add.role) != 'Contractor':
+                    print(user_to_add.role)
+                    print(type(user_to_add.role))
+                    print('user not Contractor')
                     not_valid_ids.append((user_to_add, 'user need to be Contractor'))
 
                     continue
@@ -107,10 +109,11 @@ class PricingTenderViewSet(ModelViewSet):
                 print('User added')
 
             except User.DoesNotExist:
-                print('User does not exist')
-                not_valid_ids.append((user_to_add, 'User does not exist'))
-
                 pass
+                # print('User does not exist')
+                # not_valid_ids.append((user_to_add, 'User does not exist'))
+
+
         # the value maybe it looks like it's not import but dont delete it wont work without it
         serialized_not_valid_users = [
             {'id': user.id, 'first_name': user.first_name, 'phone_number': str(user.phone_number),
