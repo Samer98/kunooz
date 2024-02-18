@@ -272,12 +272,16 @@ class OfferPriceViewSet(ModelViewSet):
 
         pricing_tender = get_object_or_404(PricingTender, id=pricing_tender_id)
         print(pricing_tender)
-        offer_price = get_object_or_404(OfferPrice, pricing_tender=pricing_tender_id)
+        offer_price = OfferPrice.objects.filter(pricing_tender=pricing_tender_id)
+        print(offer_price)
+
         if str(user.role) == "Contractor":
-            offer_price = get_object_or_404(OfferPrice, owner=user)
-        elif offer_price.owner != user and pricing_tender.pricing_tender_owner != user:
+            offer_price = OfferPrice.objects.filter(owner=user,pricing_tender=pricing_tender_id)
+        elif  pricing_tender.pricing_tender_owner == user:
+            offer_price = OfferPrice.objects.filter(pricing_tender=pricing_tender_id)
+        else:
             raise PermissionDenied("Not the owner of the offer price nor the owner of price tender")
-        serializer = self.get_serializer(offer_price)
+        serializer = self.get_serializer(offer_price,many=True)
 
         return Response(serializer.data)
 
