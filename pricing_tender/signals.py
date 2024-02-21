@@ -24,7 +24,7 @@ def offer_price_added(sender, instance, created, **kwargs):
     if created:
         # Customize the message based on your needs
         message = _(f"لقد تم اضافه عرض سعر على: {instance.pricing_tender} من قبل {instance.owner}")
-        type = "pricing_tender_contractor"
+        type = "offer_price"
         # Create a notification for the user who joined the project
         Notification.objects.create(user=instance.pricing_tender.pricing_tender_owner, message=message,type=type,
                                     extra_data={"OfferPrice_id": instance.id,
