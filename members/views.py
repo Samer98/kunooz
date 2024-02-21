@@ -56,15 +56,19 @@ from django_filters import rest_framework as django_filters
 from django_filters import rest_framework as filters
 class ProfileFilter(django_filters.FilterSet):
     role = filters.CharFilter(field_name='role__role', lookup_expr='icontains')
+    phone_number = filters.CharFilter(field_name='phone_number', method='filter_phone_number')
     class Meta:
         model = User
         fields = ['role']
+    def filter_phone_number(self, queryset, name, value):
+        print(queryset.filter(phone_number=f"+{value}"))
+        return queryset.filter(phone_number=f"+{value}")
 class ProfileViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter,DjangoFilterBackend]
-    search_fields = ['phone_number','first_name','last_name']
+    # search_fields = ['phone_number']
     filterset_class = ProfileFilter
 
     def get_permissions(self):

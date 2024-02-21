@@ -50,7 +50,13 @@ class ProjectViewSet(ModelViewSet):
                 return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.get_serializer(projects, many=True)
-        return Response(serializer.data)
+        response_data = serializer.data
+
+        # Add the count of projects created by the user to the response data
+        projects_created_by_user = Project.objects.filter(project_owner=user).count()
+        response_data.append({'projects_created_by_user' : projects_created_by_user})
+
+        return Response(response_data)
 
     def retrieve(self, request, *args, **kwargs):
         user = self.request.user
