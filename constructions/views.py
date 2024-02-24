@@ -53,7 +53,7 @@ class ProjectViewSet(ModelViewSet):
         response_data = serializer.data
 
         # Add the count of projects created by the user to the response data
-        projects_created_by_user = Project.objects.filter(project_owner=user).count()
+        projects_created_by_user  = Project.objects.filter(project_owner=user).count()
         response_data.append({'projects_created_by_user' : projects_created_by_user})
 
         return Response(response_data)
