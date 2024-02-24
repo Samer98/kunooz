@@ -138,16 +138,16 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
         raise Exception("DATABASE_URL environment variable not defined")
     DATABASES = {
         "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),}
-    # DATABASES['default']['OPTIONS'] = {
-    #     'sslmode': 'require',  # Set the SSL mode to 'require' or the appropriate value
-    #     'sslrootcert': '/path/to/ca_certificate.pem',
-    #     'sslcert': '/path/to/client_certificate.pem',
-    #     'sslkey': '/path/to/client_key.pem',
-    # }
-    # del DATABASES['default']['OPTIONS']['sslmode']
-    # del DATABASES['default']['OPTIONS']['sslrootcert']
-    # del DATABASES['default']['OPTIONS']['sslcert']
-    # del DATABASES['default']['OPTIONS']['sslkey']
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require',  # Set the SSL mode to 'require' or the appropriate value
+        'sslrootcert': '/path/to/ca_certificate.pem',
+        'sslcert': '/path/to/client_certificate.pem',
+        'sslkey': '/path/to/client_key.pem',
+    }
+    del DATABASES['default']['OPTIONS']['sslmode']
+    del DATABASES['default']['OPTIONS']['sslrootcert']
+    del DATABASES['default']['OPTIONS']['sslcert']
+    del DATABASES['default']['OPTIONS']['sslkey']
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
