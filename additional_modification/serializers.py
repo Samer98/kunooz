@@ -5,7 +5,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class AdditionalModificationSerializers(serializers.ModelSerializer):
     date_created = serializers.DateField(read_only=True)
     user = serializers.SerializerMethodField(read_only=True)
-    comments_count  = serializers.SerializerMethodField(read_only=True)  # Add this field
+    comments_count = serializers.SerializerMethodField(read_only=True)  # Add this field
 
     class Meta:
         model = AdditionalModification
