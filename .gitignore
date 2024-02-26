@@ -1,7 +1,4 @@
 db.sqlite3
 *.pyc
 .env
-/media/profile_picture/*
-/media/progress_sub_step_comment_files/*
-/media/report_files/*
-/media/additional_modification_files/*
+/media
