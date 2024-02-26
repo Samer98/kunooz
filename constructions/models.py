@@ -21,7 +21,7 @@ class Project(models.Model):
     )
     title = models.CharField(max_length=255, null=False, blank=False)
     project_owner = models.ForeignKey(User, on_delete=models.PROTECT)
-    project_number = models.PositiveIntegerField(null=False, blank=False)
+    project_number = models.CharField(max_length=255,null=False, blank=False)
     style = models.CharField(max_length=255, null=False, blank=False)
     room_number = models.IntegerField(default=0)
     space = models.IntegerField(default=0)
