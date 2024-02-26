@@ -227,7 +227,13 @@ class ProgressStepViewSet(ModelViewSet):
         return Response({"message": f"Standard steps created successfully for Project {project_id}"},
                         status=status.HTTP_200_OK)
 
-
+    @action(detail=False, methods=['get'])
+    def show_template(self, request):
+        language = request.query_params.get('language')
+        if language == "Ar":
+            return Response(Arabic_progress_step)
+        else:
+            return Response(English_progress_step)
 class ProgressStepCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
     queryset = ProgressStepComment.objects.all()
     serializer_class = ProgressStepCommentSerializers
