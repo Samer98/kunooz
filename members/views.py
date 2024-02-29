@@ -192,7 +192,7 @@ def PreRegister(request):
     if phone_in_table:
         phone_number = phone_in_table[0]
         if phone_number.is_verified:
-            return Response(_("This phone number is verified"), status=status.HTTP_200_OK)
+            return Response(_("This phone number is verified"), status=status.HTTP_409_CONFLICT)
         else:
             otp_code = generate_otp()
             # Store the OTP along with phone number and expiration time (10 minutes from now)
