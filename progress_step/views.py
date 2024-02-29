@@ -230,10 +230,39 @@ class ProgressStepViewSet(ModelViewSet):
     @action(detail=False, methods=['get'])
     def show_template(self, request):
         language = request.query_params.get('language')
-        if language == "Ar":
-            return Response(Arabic_progress_step)
-        else:
-            return Response(English_progress_step)
+        predefined_steps = Arabic_progress_step if language == "AR" else English_progress_step
+
+        template_steps = []  # Initialize an empty list to hold the steps
+
+        main_step_order = 0
+        id_number = 0
+        for main_step, sub_steps in predefined_steps.items():
+            order = sub_steps.index(sub_steps[0])  # Use the order of the first sub-step
+            main_step_data = {
+                "id": id_number,
+                "title": main_step,
+                "order": main_step_order,
+                "sub_steps": []
+            }
+            main_step_order += 1
+            id_number += 1
+            for sub_step_title in sub_steps:
+                # Create sub-steps data
+                sub_step_data = {
+                    "id": id_number,
+                    "title": sub_step_title,
+                    "order": order,
+                }
+                main_step_data["sub_steps"].append(sub_step_data)
+                order += 1
+                id_number += 1
+            template_steps.append(main_step_data)
+
+        return Response(template_steps, status=status.HTTP_200_OK)
+        # if language == "Ar":
+        #     return Response(Arabic_progress_step)
+        # else:
+        #     return Response(English_progress_step)
 class ProgressStepCommentViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
     queryset = ProgressStepComment.objects.all()
     serializer_class = ProgressStepCommentSerializers
