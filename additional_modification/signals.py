@@ -16,6 +16,6 @@ def new_additional_modification_comment_created(sender, instance, created, **kwa
         # Create a notification for the user who joined the project
         Notification.objects.create(user=instance.user, message=message,type=type,
                                     extra_data = {"project_id":instance.additional_modification.project.id,
-                                                  "additional_modification":str(instance.additional_modification),
+                                                  "additional_modification":instance.additional_modification.id,
                                                   "comment_id":instance.id})
         # Notification.set_extra_data({"project_id":instance.additional_modification.project.id, "user_id": new_member.id})

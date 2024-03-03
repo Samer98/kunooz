@@ -65,14 +65,19 @@ class AdditionalModificationViewSet(ModelViewSet):
 
 
     def create(self, request, *args, **kwargs):
-        owner = self.request.user
+        user = self.request.user
         project_id = self.request.data.get('project')
         print(project_id)
         project = get_object_or_404(Project, id=project_id)
         print(project)
+        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
+        if project_member:
+            print(project_member)
+            if str(project_member[0].member.role) != "Consultant":
+                return Response("Not a consultant", status=status.HTTP_400_BAD_REQUEST)
 
-        if project.project_owner != owner:
-            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+        elif project.project_owner != user:
+            return Response("Not the owner of the project ", status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

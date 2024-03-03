@@ -4,7 +4,8 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from notifcations.models import Notification
-from .models import ReportComment
+from .models import ReportComment, Report
+
 
 @receiver(post_save, sender=ReportComment)
 def new_report_comment_created(sender, instance, created, **kwargs):
@@ -21,7 +22,7 @@ def new_report_comment_created(sender, instance, created, **kwargs):
 
 
 
-@receiver(post_save, sender=ReportComment)
+@receiver(post_save, sender=Report)
 def new_report_created(sender, instance, created, **kwargs):
     if created:
         # Customize the message based on your needs
