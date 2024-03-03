@@ -15,7 +15,7 @@ def pricing_tender_contractor_added(sender, instance, created, **kwargs):
         type = "pricing_tender_contractor"
         # Create a notification for the user who joined the project
         Notification.objects.create(user=instance.member, message=message,type=type,
-                                    extra_data={"project_id": instance.pricing_tender.id,
+                                    extra_data={"pricing_tender_id": instance.pricing_tender.id,
                                                 })
 
 

@@ -61,11 +61,16 @@ class NoteViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        owner = self.request.user
+        user = self.request.user
         project_id = self.request.data.get('project')
         project = get_object_or_404(Project, id=project_id)
 
-        if project.project_owner != owner:
+        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
+        if project_member:
+            if str(project_member[0].member.role) != "Consultant":
+                return Response("Not a consultant", status=status.HTTP_400_BAD_REQUEST)
+
+        elif project.project_owner != user:
             raise PermissionDenied("Not the owner of the project")
 
         serializer = self.get_serializer(data=request.data)

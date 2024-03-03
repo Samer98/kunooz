@@ -70,17 +70,16 @@ class ReportViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         user = self.request.user
         project_id = self.request.data.get('project')
-        print(project_id)
-        project = get_object_or_404(Project, id=project_id)
-        print(project)
-        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
 
-        if not project_member and project.project_owner != user:
-            raise PermissionDenied("Not a member of the project")
-        # if project.project_owner != owner:
-        #     raise PermissionDenied("Not the owner of the project")
-        if str(user.role) != "Consultant":
-            raise PermissionDenied("Not a Consultant")
+        project = get_object_or_404(Project, id=project_id)
+
+        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
+        if project_member:
+            if str(project_member[0].member.role) != "Consultant":
+                return Response("Not a consultant", status=status.HTTP_400_BAD_REQUEST)
+
+        elif project.project_owner != user:
+            raise PermissionDenied("Not the owner of the project")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
