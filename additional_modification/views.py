@@ -36,15 +36,20 @@ class AdditionalModificationViewSet(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         project_id = self.kwargs.get('pk')  # Get project_name from URL
-        owner = self.request.user
+        user = self.request.user
         project = get_object_or_404(Project, id=project_id)
 
         name_filter = self.request.query_params.get('title')
         start_date_filter = self.request.query_params.get('start_date')
         end_date_filter = self.request.query_params.get('end_date')
 
-        if project.project_owner != owner:
-            return Response("Not the owner of the project", status=status.HTTP_400_BAD_REQUEST)
+        project_member = ProjectMember.objects.filter(project_id=project_id, member=user)
+        if project_member:
+            if str(project_member[0].member.role) != "Contractor":
+                return Response("Not a Contractor", status=status.HTTP_400_BAD_REQUEST)
+
+        elif project.project_owner != user:
+            raise PermissionDenied("Not the owner of the project")
 
         records = AdditionalModification.objects.filter(project_id=project_id)
 

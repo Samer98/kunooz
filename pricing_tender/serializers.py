@@ -21,12 +21,15 @@ class PricingTenderSerializers(serializers.ModelSerializer):
     members = PricingTenderContractorSerializers(many=True, source='pricingtendercontractor_set', read_only=True)
     pricing_tender_owner = serializers.CharField(read_only=True)
     date_created = serializers.DateField(read_only=True)
-
+    number_of_applicants = serializers.SerializerMethodField()  # New field for the number of offer prices
     class Meta:
         model = PricingTender
         fields = ['id','pricing_tender_owner','project_name','planing','three_d',
-                  'quantities_and_specifications','other_files','members', 'date_created']
+                  'quantities_and_specifications','other_files','members', 'date_created','number_of_applicants']
 
+    def get_number_of_applicants(self, obj):
+        # obj here represents each PricingTender instance
+        return obj.offerprice_set.count()
 
 # class PricingTinderCommentSerializers(serializers.ModelSerializer):
 #     date_created = serializers.DateField(read_only=True)

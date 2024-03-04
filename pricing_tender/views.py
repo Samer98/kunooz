@@ -48,7 +48,6 @@ class PricingTenderViewSet(ModelViewSet):
                 queryset = queryset.filter(date_created__range=[start_date, end_date])
             except (ValueError, TypeError):
                 raise PermissionDenied("Invalid date format. Use YYYY-MM-DD")
-
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
